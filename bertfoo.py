@@ -5,7 +5,7 @@ from ciscosparkapi import CiscoSparkAPI
 from random import randint
 import time
 import click
-import json
+import datetime
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -19,15 +19,16 @@ EPILOG = 'Have a fun time throwing foo\'s at bars'
 spark_token = os.environ["SPARK_ACCESS_TOKEN"]
 api = CiscoSparkAPI()
 
-color_black2 = "\033[1;30m{0}\033[00m"
+color_black2 = "\033[1;30m"
 color_red2_on = "\033[01;31m"
 color_red2_off = "\33[00m"
-color_green2 = "\033[1;32m{0}\033[00m"
-color_yellow2 = "\033[1;33m{0}\033[00m"
+color_green2 = "\033[1;32m"
+color_yellow2 = "\033[1;33m"
 color_blue2 = "\033[1;34m"
-color_purple2 = "\033[1;35m{0}\033[00m"
-color_cyan2 = "\033[1;36m{0}\033[00m"
-color_white2 = "\033[1;37m{0}\033[00m"
+color_purple2 = "\033[1;35m"
+color_cyan2 = "\033[1;36m"
+color_white2 = "\033[1;37m"
+color_off = "\33[00m"
 
 
 @click.group(epilog=EPILOG, context_settings=CONTEXT_SETTINGS)
@@ -80,8 +81,9 @@ def fortune_spam(channel, spam_file):
 def retrieve_rooms():
     all_rooms = api.rooms.list()
     for room in all_rooms:
+        dt = datetime.datetime.strptime(room.lastActivity, "%Y-%m-%dT%H:%M:%S.%fZ")
         print(color_red2_on + '{:45}'.format(str(room.title)) + color_red2_off +
-              '--' + color_blue2 + str(room.lastActivity))
+              '--' + color_blue2 + 'Last Activity: ' + color_yellow2 + str(dt.date()))
 
 cli.add_command(fortune_spam, 'spam')
 cli.add_command(retrieve_rooms, 'rooms')
