@@ -24,7 +24,7 @@ color_red2_on = "\033[01;31m"
 color_red2_off = "\33[00m"
 color_green2 = "\033[1;32m{0}\033[00m"
 color_yellow2 = "\033[1;33m{0}\033[00m"
-color_blue2 = "\033[1;34m{0}\033[00m"
+color_blue2 = "\033[1;34m"
 color_purple2 = "\033[1;35m{0}\033[00m"
 color_cyan2 = "\033[1;36m{0}\033[00m"
 color_white2 = "\033[1;37m{0}\033[00m"
@@ -80,7 +80,8 @@ def fortune_spam(channel, spam_file):
 def retrieve_rooms():
     all_rooms = api.rooms.list()
     for room in all_rooms:
-        print(room.title)
+        print(color_red2_on + '{:45}'.format(str(room.title)) + color_red2_off +
+              '--' + color_blue2 + str(room.lastActivity))
 
 cli.add_command(fortune_spam, 'spam')
 cli.add_command(retrieve_rooms, 'rooms')
