@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-from ciscosparkapi import CiscoSparkAPI
+from ciscosparkapi import CiscoSparkAPI, SparkApiError
 from random import randint
 import time
 import click
@@ -53,6 +53,7 @@ def fortune_spam(channel, spam_file):
     """
     test_room = api.rooms.create(channel)
     parsed_fortunes = []
+    me = api.people.me()
     n = 0
     try:
         with open(spam_file, 'r') as f:
@@ -80,10 +81,18 @@ def fortune_spam(channel, spam_file):
 @click.command(options_metavar='[no options]', short_help='return a list of channels')
 def retrieve_rooms():
     all_rooms = api.rooms.list()
-    for room in all_rooms:
-        dt = datetime.datetime.strptime(room.lastActivity, "%Y-%m-%dT%H:%M:%S.%fZ")
-        print(color_red2_on + '{:45}'.format(str(room.title)) + color_red2_off +
-              '--' + color_blue2 + 'Last Activity: ' + color_yellow2 + str(dt.date()))
+    rooms_dict = {}
+    try:
+        for room in all_rooms:
+            dt = datetime.datetime.strptime(room.lastActivity, "%Y-%m-%dT%H:%M:%S.%fZ")
+            rm = room.title
+            rooms_dict[str(dt.date())] = rm
+    except SparkApiError as e:
+        print(e)
+    for k, v in rooms_dict.items():
+        print(color_red2_on + '{:45}'.format(v) + color_red2_off +
+              '--' + color_blue2 + 'Last Activity: ' + color_yellow2 + str(k))
+
 
 cli.add_command(fortune_spam, 'spam')
 cli.add_command(retrieve_rooms, 'rooms')
