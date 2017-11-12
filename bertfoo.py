@@ -6,6 +6,7 @@ from random import randint
 import time
 import click
 import datetime
+import requests
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -34,7 +35,7 @@ color_off = "\33[00m"
 @click.group(epilog=EPILOG, context_settings=CONTEXT_SETTINGS)
 def cli():
     """
-    Quick and dirty proof of concept. Randomly sends text from file to a spark room
+    Quick and dirty proof of concept. Exercises the Spark API without killing any kittens.
     :return: 
     """
     pass
@@ -53,7 +54,6 @@ def fortune_spam(channel, spam_file):
     """
     test_room = api.rooms.create(channel)
     parsed_fortunes = []
-    me = api.people.me()
     n = 0
     try:
         with open(spam_file, 'r') as f:
@@ -80,6 +80,10 @@ def fortune_spam(channel, spam_file):
 
 @click.command(options_metavar='[no options]', short_help='return a list of channels')
 def retrieve_rooms():
+    """
+    Returns a list of rooms the user is a part of, or spaces, or whatever we're calling it today
+    :return: 
+    """
     all_rooms = api.rooms.list()
     rooms_dict = {}
     try:
@@ -95,22 +99,52 @@ def retrieve_rooms():
 
 
 def get_rooms_id():
-    rooms = (room.id for room in api.rooms.list())
+    """
+    Returns a list of rooms by ID
+    :return: 
+    """
+    rooms = (room for room in api.rooms.list())
     for room in rooms:
         yield room
 
 
 def get_room_msg(room_id=''):
+    """
+    Returns messages from a given room ID
+    :param room_id: 
+    :return: 
+    """
     room_messages = [item for item in api.messages.list(roomId=room_id)]
     for msg in room_messages:
         yield msg
 
 
+def get_attachments(files):
+    """
+    Return a list of human-readable attachment names in a given room
+    :param my_msg_id: 
+    :return: 
+    """
+    url = files
+    headers = {"Authorization": "Bearer ZjcxNTcwZmItZDMxYS00OWYzLTk5N2UtMTAxYzBiMWYxOTgwMTMwNGYwODktMDdh", }
+    response = requests.get(url, headers=headers)
+    yield response.headers
+
+
 @click.command(options_metavar='[no options]', short_help='get files')
 def get_files():
+    """
+    Returns a list of file attachments in room(s). Slow as shit currently, need to figure out why
+    :return: 
+    """
     for room_id in get_rooms_id():
-        for msg in get_room_msg(room_id):
-            print(msg.text)
+        for msg in get_room_msg(room_id.id):
+            if msg.files:
+                for filename in msg.files:
+                    for item in get_attachments(filename):
+                        print(color_red2_on + room_id.title +
+                          color_red2_off + ' - ' + item['Content-Disposition'])
+
 
 cli.add_command(get_files, 'files')
 cli.add_command(fortune_spam, 'spam')
@@ -122,4 +156,3 @@ if __name__ == '__main__':
     except TypeError as err:
         print('Not sure what shit the bed (you probably fucked up), but the error is below:')
         print(color_red2_on + str(err) + color_red2_off)
-
