@@ -94,6 +94,25 @@ def retrieve_rooms():
               '--' + color_blue2 + 'Last Activity: ' + color_yellow2 + str(k))
 
 
+def get_rooms_id():
+    rooms = (room.id for room in api.rooms.list())
+    for room in rooms:
+        yield room
+
+
+def get_room_msg(room_id=''):
+    room_messages = [item for item in api.messages.list(roomId=room_id)]
+    for msg in room_messages:
+        yield msg
+
+
+@click.command(options_metavar='[no options]', short_help='get files')
+def get_files():
+    for room_id in get_rooms_id():
+        for msg in get_room_msg(room_id):
+            print(msg.text)
+
+cli.add_command(get_files, 'files')
 cli.add_command(fortune_spam, 'spam')
 cli.add_command(retrieve_rooms, 'rooms')
 
