@@ -103,7 +103,7 @@ def get_my_rooms():
     Returns a list of rooms by ID
     :return: 
     """
-    rooms = (room for room in api.rooms.list())
+    rooms = [room for room in api.rooms.list()]
     for room in rooms:
         yield room
 
