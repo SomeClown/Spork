@@ -134,8 +134,7 @@ def get_attachments(files):
 @click.command(options_metavar='[no options]', short_help='get files')
 def get_files():
     """
-    Returns a list of file attachments in room(s). Slow as shit currently, need to figure out why, aside
-    from having many, many nested loops grabbing from generator functions. Not certain how to best optimize this.
+    Returns a list of file attachments in room(s). Slow as shit currently, needs serious optimizing
     :return: 
     """
     for room_id in get_my_rooms():
