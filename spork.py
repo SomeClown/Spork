@@ -98,7 +98,7 @@ def retrieve_rooms():
               '--' + color_blue2 + 'Last Activity: ' + color_yellow2 + str(k))
 
 
-def get_rooms_id():
+def get_my_rooms():
     """
     Returns a list of rooms by ID
     :return: 
@@ -134,10 +134,11 @@ def get_attachments(files):
 @click.command(options_metavar='[no options]', short_help='get files')
 def get_files():
     """
-    Returns a list of file attachments in room(s). Slow as shit currently, need to figure out why
+    Returns a list of file attachments in room(s). Slow as shit currently, need to figure out why, aside
+    from having many, many nested loops grabbing from generator functions. Not certain how to best optimize this.
     :return: 
     """
-    for room_id in get_rooms_id():
+    for room_id in get_my_rooms():
         for msg in get_room_msg(room_id.id):
             if msg.files:
                 for filename in msg.files:
@@ -152,6 +153,12 @@ cli.add_command(retrieve_rooms, 'rooms')
 
 if __name__ == '__main__':
     try:
+        """
+        # Test code
+        foo = get_my_rooms()
+        for thing in foo:
+            print(thing)
+        """
         cli()
     except TypeError as err:
         print('Not sure what shit the bed (you probably fucked up), but the error is below:')
