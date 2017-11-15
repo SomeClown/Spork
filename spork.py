@@ -7,6 +7,7 @@ import time
 import click
 import datetime
 import requests
+from progress.bar import Bar
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -108,6 +109,15 @@ def get_my_rooms():
         yield room
 
 
+def get_my_rooms_lst():
+    """
+    Returns a list of rooms by ID
+    :return: 
+    """
+    rooms = [room for room in api.rooms.list()]
+    return rooms
+
+
 def get_room_msg(room_id=''):
     """
     Returns messages from a given room ID
@@ -117,6 +127,16 @@ def get_room_msg(room_id=''):
     room_messages = [item for item in api.messages.list(roomId=room_id)]
     for msg in room_messages:
         yield msg
+
+
+def get_room_msg_lst(room_id=''):
+    """
+    Returns messages from a given room ID
+    :param room_id: 
+    :return: 
+    """
+    room_messages = [item for item in api.messages.list(roomId=room_id)]
+    return room_messages
 
 
 def get_attachments(files):
@@ -144,7 +164,6 @@ def get_files():
                     for item in get_attachments(filename):
                         print(color_red2_on + room_id.title +
                               color_red2_off + ' - ' + item['Content-Disposition'])
-
 
 cli.add_command(get_files, 'files')
 cli.add_command(fortune_spam, 'spam')
