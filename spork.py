@@ -7,7 +7,6 @@ import time
 import click
 import datetime
 import requests
-from progress.bar import Bar
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -115,7 +114,8 @@ def get_my_rooms_lst():
     :return: 
     """
     rooms = [room for room in api.rooms.list()]
-    return rooms
+    my_files = [item.files for item in rooms]
+    return my_files
 
 
 def get_room_msg(room_id=''):
@@ -136,19 +136,8 @@ def get_room_msg_lst(room_id=''):
     :return: 
     """
     room_messages = [item for item in api.messages.list(roomId=room_id)]
-    return room_messages
-
-
-def get_attachments(files):
-    """
-    Return a list of human-readable attachment names in a given room
-    :param files: 
-    :return: 
-    """
-    url = files
-    headers = {"Authorization": "Bearer ZjcxNTcwZmItZDMxYS00OWYzLTk5N2UtMTAxYzBiMWYxOTgwMTMwNGYwODktMDdh", }
-    response = requests.get(url, headers=headers)
-    yield response.headers
+    my_files = [item.files for item in room_messages]
+    return my_files
 
 
 @click.command(options_metavar='[no options]', short_help='get files')
@@ -158,12 +147,8 @@ def get_files():
     :return: 
     """
     for room_id in get_my_rooms():
-        for msg in get_room_msg(room_id.id):
-            if msg.files:
-                for filename in msg.files:
-                    for item in get_attachments(filename):
-                        print(color_red2_on + room_id.title +
-                              color_red2_off + ' - ' + item['Content-Disposition'])
+        print(get_room_msg_lst(room_id.id))
+
 
 cli.add_command(get_files, 'files')
 cli.add_command(fortune_spam, 'spam')
