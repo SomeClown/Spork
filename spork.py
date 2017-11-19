@@ -140,6 +140,14 @@ def get_room_msg_lst(room_id=''):
     return my_files
 
 
+def flatten(lst):
+    for element in lst:
+        if hasattr(element,"__iter__"):
+            yield from flatten(element)
+        elif not element is None:
+            yield element
+
+
 @click.command(options_metavar='[no options]', short_help='get files')
 def get_files():
     """
