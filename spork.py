@@ -136,15 +136,15 @@ def get_room_msg_lst(room_id=''):
     :return: 
     """
     room_messages = [item for item in api.messages.list(roomId=room_id)]
-    my_files = [item.files for item in room_messages]
-    return my_files
+    # my_files = [item.files for item in room_messages]
+    return room_messages
 
 
 def flatten(lst):
     for element in lst:
-        if hasattr(element,"__iter__"):
+        if hasattr(element, "__iter__"):
             yield from flatten(element)
-        elif not element is None:
+        elif element is not None:
             yield element
 
 
@@ -154,8 +154,19 @@ def get_files():
     Returns a list of file attachments in room(s). Slow as shit currently, needs serious optimizing
     :return: 
     """
+    count = 0
+    start = time.time()
     for room_id in get_my_rooms():
-        print(get_room_msg_lst(room_id.id))
+        room_list = get_room_msg_lst(room_id.id)
+        my_files = [item.files for item in room_list]
+        for item in my_files:
+            if item is not None:
+                print(item)
+                count += 1
+    finish = time.time()
+    elapsed = finish - start
+    print('Elapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
+    print('Items processed: ', count)
 
 
 cli.add_command(get_files, 'files')
