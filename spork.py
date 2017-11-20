@@ -6,7 +6,6 @@ from random import randint
 import time
 import click
 import datetime
-import requests
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -140,7 +139,12 @@ def get_room_msg_lst(room_id=''):
     return room_messages
 
 
-def flatten(lst):
+def flatten(lst: list):
+    """
+    Not used at this point. Flattens a nested list
+    :param lst:
+    :return:
+    """
     for element in lst:
         if hasattr(element, "__iter__"):
             yield from flatten(element)
@@ -151,11 +155,12 @@ def flatten(lst):
 @click.command(options_metavar='[no options]', short_help='get files')
 def get_files():
     """
-    Returns a list of file attachments in room(s). Slow as shit currently, needs serious optimizing
+    Returns a list of file attachments in room(s)
     :return: 
     """
     count = 0
     start = time.time()
+    # final_list = []
     for room_id in get_my_rooms():
         room_list = get_room_msg_lst(room_id.id)
         my_files = [item.files for item in room_list]
@@ -163,6 +168,7 @@ def get_files():
             if item is not None:
                 for discrete_file in item:
                     print(discrete_file)
+                    # final_list.append(discrete_file)
                     count += 1
     finish = time.time()
     elapsed = finish - start
@@ -176,12 +182,6 @@ cli.add_command(retrieve_rooms, 'rooms')
 
 if __name__ == '__main__':
     try:
-        """
-        # Test code
-        foo = get_my_rooms()
-        for thing in foo:
-            print(thing)
-        """
         cli()
     except TypeError as err:
         print('Not sure what shit the bed (you probably fucked up), but the error is below:')
