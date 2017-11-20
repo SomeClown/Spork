@@ -161,8 +161,9 @@ def get_files():
         my_files = [item.files for item in room_list]
         for item in my_files:
             if item is not None:
-                print(item)
-                count += 1
+                for discrete_file in item:
+                    print(discrete_file)
+                    count += 1
     finish = time.time()
     elapsed = finish - start
     print('Elapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
