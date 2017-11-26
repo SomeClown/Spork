@@ -165,7 +165,7 @@ def get_files():
         room_list = get_room_msg_lst(room_id.id)
         my_files = [item.files for item in room_list]
         with open('file_list', 'a+') as f:
-            for item in tqdm(my_files, total=len(room_list), unit=" complete"):
+            for item in tqdm(my_files):
                 if item is not None:
                     for discrete_file in item:
                         # print(discrete_file)
