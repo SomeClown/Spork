@@ -6,6 +6,7 @@ from random import randint
 import time
 import click
 import datetime
+from tqdm import tqdm
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -135,7 +136,6 @@ def get_room_msg_lst(room_id=''):
     :return: 
     """
     room_messages = [item for item in api.messages.list(roomId=room_id)]
-    # my_files = [item.files for item in room_messages]
     return room_messages
 
 
@@ -164,12 +164,14 @@ def get_files():
     for room_id in get_my_rooms():
         room_list = get_room_msg_lst(room_id.id)
         my_files = [item.files for item in room_list]
-        for item in my_files:
-            if item is not None:
-                for discrete_file in item:
-                    print(discrete_file)
-                    # final_list.append(discrete_file)
-                    count += 1
+        with open('file_list', 'a+') as f:
+            for item in tqdm(my_files, total=len(room_list), unit=" complete"):
+                if item is not None:
+                    for discrete_file in item:
+                        # print(discrete_file)
+                        f.write(discrete_file + '\n')
+                        # final_list.append(discrete_file)
+                        count += 1
     finish = time.time()
     elapsed = finish - start
     print('Elapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
