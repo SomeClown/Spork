@@ -167,7 +167,6 @@ def get_files():
             for item in tqdm(my_files):
                 if item is not None:
                     for discrete_file in item:
-                        # print(discrete_file)
                         f.write(discrete_file + '\n')
                         count += 1
     finish = time.time()
