@@ -160,7 +160,6 @@ def get_files():
     """
     count = 0
     start = time.time()
-    # final_list = []
     for room_id in get_my_rooms():
         room_list = get_room_msg_lst(room_id.id)
         my_files = [item.files for item in room_list]
@@ -170,7 +169,6 @@ def get_files():
                     for discrete_file in item:
                         # print(discrete_file)
                         f.write(discrete_file + '\n')
-                        # final_list.append(discrete_file)
                         count += 1
     finish = time.time()
     elapsed = finish - start
