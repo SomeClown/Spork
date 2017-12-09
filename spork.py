@@ -7,6 +7,7 @@ import time
 import click
 import datetime
 from tqdm import tqdm
+import progressbar
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -152,36 +153,43 @@ def flatten(lst: list):
             yield element
 
 
-@click.command(options_metavar='[no options]', short_help='get files')
-def get_files():
+@click.command(options_metavar='[no options]', short_help='get list of files')
+def get_all_files_list():
     """
     Returns a list of file attachments in room(s)
     :return: 
     """
-    count = 0
     start = time.time()
+    rooms_dict = {}
     for room_id in get_my_rooms():
-        room_list = get_room_msg_lst(room_id.id)
-        my_files = [item.files for item in room_list]
+        msg_list = get_room_msg_lst(room_id.id)
+        rooms_dict[room_id.id] = len(msg_list)
+        my_files = [item.files for item in msg_list]
         with open('file_list', 'a+') as f:
-            for item in tqdm(my_files):
+            for item in my_files:
                 if item is not None:
                     for discrete_file in item:
-                        f.write(discrete_file + '\n')
-                        count += 1
+                        with progressbar.ProgressBar(max_value=len(my_files)) as bar:
+                            for i in range(len(my_files)):
+                                bar.update(i)
+                                f.write(discrete_file + '\n')
     finish = time.time()
     elapsed = finish - start
     print('Elapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
     print('Items processed: ', count)
+    for key, value in rooms_dict.items():
+        print(key, value)
 
-
-cli.add_command(get_files, 'files')
+cli.add_command(get_all_files_list, 'files')
 cli.add_command(fortune_spam, 'spam')
 cli.add_command(retrieve_rooms, 'rooms')
 
 if __name__ == '__main__':
+    cli()
+    """
     try:
         cli()
     except TypeError as err:
         print('Not sure what shit the bed (you probably fucked up), but the error is below:')
         print(color_red2_on + str(err) + color_red2_off)
+    """
