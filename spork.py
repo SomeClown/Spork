@@ -169,10 +169,8 @@ def get_all_files_list():
             for item in my_files:
                 if item is not None:
                     for discrete_file in item:
-                        with progressbar.ProgressBar(max_value=len(my_files)) as bar:
-                            for i in range(len(my_files)):
-                                bar.update(i)
-                                f.write(discrete_file + '\n')
+                        print(discrete_file)
+                        # f.write(discrete_file + '\n')
     finish = time.time()
     elapsed = finish - start
     print('Elapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
