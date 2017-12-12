@@ -115,8 +115,7 @@ def get_my_rooms_lst():
     :return: 
     """
     rooms = [room for room in api.rooms.list()]
-    my_files = [item.files for item in rooms]
-    return my_files
+    return rooms
 
 
 def get_room_msg(room_id=''):
@@ -125,7 +124,7 @@ def get_room_msg(room_id=''):
     :param room_id: 
     :return: 
     """
-    room_messages = [item for item in api.messages.list(roomId=room_id)]
+    room_messages = [item for item in api.messages.list(roomId=room_id) if item.files is not None]
     for msg in room_messages:
         yield msg
 
@@ -136,7 +135,7 @@ def get_room_msg_lst(room_id=''):
     :param room_id: 
     :return: 
     """
-    room_messages = [item for item in api.messages.list(roomId=room_id)]
+    room_messages = [item for item in api.messages.list(roomId=room_id) if item.files is not None]
     return room_messages
 
 
@@ -161,20 +160,18 @@ def get_all_files_list():
     """
     start = time.time()
     rooms_dict = {}
-    for room_id in get_my_rooms():
-        msg_list = get_room_msg_lst(room_id.id)
-        rooms_dict[room_id.id] = len(msg_list)
+    for room in get_my_rooms():
+        msg_list = get_room_msg_lst(room.id)
+        rooms_dict[room.id] = (len(msg_list), room.title)
+        """
         my_files = [item.files for item in msg_list]
-        with open('file_list', 'a+') as f:
-            for item in my_files:
-                if item is not None:
-                    for discrete_file in item:
-                        print(discrete_file)
-                        # f.write(discrete_file + '\n')
+        for item in my_files:
+            print(room.title, item)
+            # f.write(discrete_file + '\n')
+        """
     finish = time.time()
     elapsed = finish - start
     print('Elapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
-    print('Items processed: ', count)
     for key, value in rooms_dict.items():
         print(key, value)
 
