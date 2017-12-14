@@ -169,22 +169,19 @@ def get_all_files_list():
             print(room.title, item)
             # f.write(discrete_file + '\n')
         """
-    finish = time.time()
-    elapsed = finish - start
-    print('Elapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
     for key, value in rooms_dict.items():
         print(key, value)
+    finish = time.time()
+    elapsed = finish - start
+    print('\nElapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
 
 cli.add_command(get_all_files_list, 'files')
 cli.add_command(fortune_spam, 'spam')
 cli.add_command(retrieve_rooms, 'rooms')
 
 if __name__ == '__main__':
-    cli()
-    """
     try:
         cli()
     except TypeError as err:
-        print('Not sure what shit the bed (you probably fucked up), but the error is below:')
+        print('Not sure what shit the bed, but we\'ll blame it on you. The error is below:')
         print(color_red2_on + str(err) + color_red2_off)
-    """
