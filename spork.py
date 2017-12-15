@@ -179,7 +179,9 @@ def save_files(data: dict, file_name: str, file_type: str):
 
 
 @click.command(options_metavar='[no options]', short_help='get list of files')
-def get_all_files_list():
+@click.option('-f', '--filename', 'filename', help='file name to store room message data')
+@click.option('-t', '--type', 'filetype', help='Type of file: json, csv, binary, text')
+def get_all_files_list(filename, filetype):
     """
     Returns a list of file attachments in room(s)
     :return: 
@@ -188,14 +190,13 @@ def get_all_files_list():
     rooms_dict = {}
     my_rooms = get_my_rooms_lst()
     for room in tqdm(my_rooms, desc='Total of all rooms completed: '):
-        for i in tqdm(room.title, desc='Working on room: %s ' % room.title):
-            msg_list = get_room_msg_lst(room.id)
-            files_temp = []
-            for item in msg_list:
-                files_temp.append(item.files)
-            rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
+        msg_list = get_room_msg_lst(room.id)
+        files_temp = []
+        for item in msg_list:
+            files_temp.append(item.files)
+        rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
         tqdm.write("Completed room  %s " % room.title)
-    save_files(rooms_dict, file_type='csv', file_name='all_files.csv')
+    save_files(rooms_dict, file_type=filetype, file_name=filename)
     finish = time.time()
     elapsed = finish - start
     print('\nElapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
