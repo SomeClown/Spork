@@ -121,7 +121,7 @@ def get_my_rooms_lst():
     return rooms
 
 
-def get_room_msg(room_id=''):
+def get_room_msg(room_id):
     """
     Returns messages from a given room ID
     :param room_id: 
@@ -132,7 +132,7 @@ def get_room_msg(room_id=''):
         yield msg
 
 
-def get_room_msg_lst(room_id=''):
+def get_room_msg_lst(room_id):
     """
     Returns messages from a given room ID
     :param room_id: 
@@ -174,6 +174,9 @@ def save_files(data: dict, file_name: str, file_type: str):
         file = csv.writer(open(file_name, "w"))
         for key, value in data.items():
             file.writerow([key, value])
+    elif file_type == 'text':
+        with open(file_name, "w") as f:
+            f.write(str(data))
 
 
 @click.command(options_metavar='[no options]', short_help='get list of files')
@@ -189,15 +192,19 @@ def get_all_files_list():
         msg_list = get_room_msg_lst(room.id)
         files_temp = []
         for item in msg_list:
-            files_temp.append(item.files)
+            if len(msg_list) != 0:
+                files_temp.append(item.files)
         rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
-    for key, _ in rooms_dict.items():
-        print(key, _)
-    save_files(rooms_dict, file_type='json', file_name='all_files.json')
+    for key, value in rooms_dict.items():
+        print(key, value)
+        print('\n\n')
+    save_files(rooms_dict, file_type='csv', file_name='all_files.csv')
     finish = time.time()
     elapsed = finish - start
     print('\nElapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
 
+
+# Adding the cli commands which trigger the functions above
 cli.add_command(get_all_files_list, 'files')
 cli.add_command(fortune_spam, 'spam')
 cli.add_command(retrieve_rooms, 'rooms')
