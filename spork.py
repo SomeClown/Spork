@@ -7,6 +7,8 @@ import time
 import click
 import datetime
 import json
+import pickle
+import csv
 from tqdm import tqdm
 import progressbar
 
@@ -165,6 +167,13 @@ def save_files(data: dict, file_name: str, file_type: str):
         name = json.dumps(data)
         with open(file_name, 'w') as f:
             f.write(name)
+    elif file_type == 'pkl':
+        with open(file_name, 'wb') as f:
+            pickle.dump(data, f)
+    elif file_type == 'csv':
+        file = csv.writer(open(file_name, "w"))
+        for key, value in data.items():
+            file.writerow([key, value])
 
 
 @click.command(options_metavar='[no options]', short_help='get list of files')
@@ -182,9 +191,10 @@ def get_all_files_list():
         for item in msg_list:
             files_temp.append(item.files)
         rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
+        save_files(rooms_dict, file_type='json', file_name=room.id)
     for key, _ in rooms_dict.items():
         print(key, _)
-    save_files(rooms_dict, file_type='json', file_name='all_files.json')
+    # save_files(rooms_dict, file_type='json', file_name='all_files.json')
     finish = time.time()
     elapsed = finish - start
     print('\nElapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
