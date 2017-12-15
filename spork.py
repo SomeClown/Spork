@@ -6,6 +6,7 @@ from random import randint
 import time
 import click
 import datetime
+import json
 from tqdm import tqdm
 import progressbar
 
@@ -152,6 +153,20 @@ def flatten(lst: list):
             yield element
 
 
+def save_files(data: dict, file_name: str, file_type: str):
+    """
+    Save data to file in a variety of formats
+    :param data: dictionary
+    :param file_name: file name
+    :param file_type: one of json, text, csv, pickle
+    :return: 
+    """
+    if file_type == 'json':
+        name = json.dumps(data)
+        with open(file_name, 'w') as f:
+            f.write(name)
+
+
 @click.command(options_metavar='[no options]', short_help='get list of files')
 def get_all_files_list():
     """
@@ -169,8 +184,7 @@ def get_all_files_list():
         rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
     for key, _ in rooms_dict.items():
         print(key, _)
-        # with open(key, mode='w') as f:
-        #    f.write(value)
+    save_files(rooms_dict, file_type='json', file_name='all_files.json')
     finish = time.time()
     elapsed = finish - start
     print('\nElapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
