@@ -9,8 +9,7 @@ import datetime
 import json
 import pickle
 import csv
-from tqdm import tqdm
-import progressbar
+from tqdm import tqdm, trange
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -145,8 +144,8 @@ def get_room_msg_lst(room_id):
 def flatten(lst: list):
     """
     Not used at this point. Flattens a nested list
-    :param lst:
-    :return:
+    :param lst: 
+    :return: 
     """
     for element in lst:
         if hasattr(element, "__iter__"):
@@ -187,17 +186,15 @@ def get_all_files_list():
     """
     start = time.time()
     rooms_dict = {}
-
-    for room in get_my_rooms():
-        msg_list = get_room_msg_lst(room.id)
-        files_temp = []
-        for item in msg_list:
-            if len(msg_list) != 0:
+    my_rooms = get_my_rooms_lst()
+    for room in tqdm(my_rooms, desc='Total of all rooms completed: '):
+        for i in tqdm(room.title, desc='Working on room: %s ' % room.title):
+            msg_list = get_room_msg_lst(room.id)
+            files_temp = []
+            for item in msg_list:
                 files_temp.append(item.files)
-        rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
-    for key, value in rooms_dict.items():
-        print(key, value)
-        print('\n\n')
+            rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
+        tqdm.write("Completed room  %s " % room.title)
     save_files(rooms_dict, file_type='csv', file_name='all_files.csv')
     finish = time.time()
     elapsed = finish - start
