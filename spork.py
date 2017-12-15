@@ -160,17 +160,17 @@ def get_all_files_list():
     """
     start = time.time()
     rooms_dict = {}
+
     for room in get_my_rooms():
         msg_list = get_room_msg_lst(room.id)
-        rooms_dict[room.id] = (len(msg_list), room.title)
-        """
-        my_files = [item.files for item in msg_list]
-        for item in my_files:
-            print(room.title, item)
-            # f.write(discrete_file + '\n')
-        """
-    for key, value in rooms_dict.items():
-        print(key, value)
+        files_temp = []
+        for item in msg_list:
+            files_temp.append(item.files)
+        rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
+    for key, _ in rooms_dict.items():
+        print(key, _)
+        # with open(key, mode='w') as f:
+        #    f.write(value)
     finish = time.time()
     elapsed = finish - start
     print('\nElapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
