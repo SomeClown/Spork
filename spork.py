@@ -191,10 +191,9 @@ def get_all_files_list():
         for item in msg_list:
             files_temp.append(item.files)
         rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
-        save_files(rooms_dict, file_type='json', file_name=room.id)
     for key, _ in rooms_dict.items():
         print(key, _)
-    # save_files(rooms_dict, file_type='json', file_name='all_files.json')
+    save_files(rooms_dict, file_type='json', file_name='all_files.json')
     finish = time.time()
     elapsed = finish - start
     print('\nElapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
