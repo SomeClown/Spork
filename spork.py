@@ -189,13 +189,13 @@ def get_all_files_list(filename, filetype):
     start = time.time()
     rooms_dict = {}
     my_rooms = get_my_rooms_lst()
-    for room in tqdm(my_rooms, desc='Total of all rooms completed: '):
+    for room in tqdm(my_rooms, desc='%sTotal of all rooms completed: %s' % (color_red2_on, color_red2_off)):
         msg_list = get_room_msg_lst(room.id)
         files_temp = []
         for item in msg_list:
             files_temp.append(item.files)
         rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
-        tqdm.write("Completed room  %s " % room.title)
+        tqdm.write("%sCompleted room  %s %s " % (color_red2_on, color_blue2, room.title))
     save_files(rooms_dict, file_type=filetype, file_name=filename)
     finish = time.time()
     elapsed = finish - start
