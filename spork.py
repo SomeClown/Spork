@@ -9,7 +9,7 @@ import datetime
 import json
 import pickle
 import csv
-from tqdm import tqdm, trange
+from tqdm import tqdm
 
 __author__ = "SomeClown"
 __license__ = "MIT"
