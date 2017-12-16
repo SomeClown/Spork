@@ -156,10 +156,12 @@ def retrieve_rooms():
     for room in all_rooms:
         dt = datetime.datetime.strptime(room.lastActivity, "%Y-%m-%dT%H:%M:%S.%fZ")
         rm = room.title
-        rooms_dict[str(dt.date())] = rm
-    for k, v in rooms_dict.items():
-        print(color_red2_on + '{:45}'.format(v) + color_red2_off +
-              '--' + color_blue2 + 'Last Activity: ' + color_yellow2 + str(k))
+        rm_id = room.id
+        rooms_dict[rm_id] = (str(dt.date()), rm)
+        save_files(rooms_dict, 'rooms', 'json')
+    for _, v in rooms_dict.items():
+            print(color_red2_on + '{:45}'.format(v[1]) + color_red2_off +
+                  '--' + color_blue2 + 'Last Activity: ' + color_yellow2 + str(v[0]))
 
 
 @click.command(short_help='Spam a foo', help='#KeepCalmAndSpamOn')
