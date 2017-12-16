@@ -122,9 +122,8 @@ def save_files(data: dict, file_name: str, file_type: str):
 
 
 @click.command(options_metavar='[no options]', short_help='get list of files')
-@click.option('-f', '--filename', 'filename', help='file name to store room message data')
 @click.option('-t', '--type', 'file_type', help='Type of file: json, csv, binary, text')
-def get_all_files_list(filename, file_type):
+def get_all_files_list(file_type):
     """
     Returns a list of file attachments in room(s) and stores in a user-specified file and format
     :return: 
@@ -139,6 +138,7 @@ def get_all_files_list(filename, file_type):
             files_temp.append(item.files)
         rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
         tqdm.write("%sCompleted room  %s %s " % (color_red2_on, color_blue2, room.title))
+    filename = ('.files.' + file_type)
     save_files(rooms_dict, file_type=file_type, file_name=filename)
     finish = time.time()
     elapsed = finish - start
@@ -158,10 +158,11 @@ def retrieve_rooms():
         rm = room.title
         rm_id = room.id
         rooms_dict[rm_id] = (str(dt.date()), rm)
-        save_files(rooms_dict, 'rooms', 'json')
+        save_files(rooms_dict, '.rooms.json', 'json')
     for _, v in rooms_dict.items():
-            print(color_red2_on + '{:45}'.format(v[1]) + color_red2_off +
-                  '--' + color_blue2 + 'Last Activity: ' + color_yellow2 + str(v[0]))
+        (activity_date, room_title) = v
+        print(color_red2_on + '{:45}'.format(room_title) + color_red2_off +
+              '--' + color_blue2 + 'Last Activity: ' + color_yellow2 + str(activity_date))
 
 
 @click.command(short_help='Spam a foo', help='#KeepCalmAndSpamOn')
@@ -201,14 +202,39 @@ def fortune_spam(channel, spam_file):
         print(color_red2_on + str(e) + color_red2_off)
 
 
+@click.command(short_help='List messages in a room', help='List messages in a room')
+@click.option('-n', '--name', 'name', help='name of room')
+def get_messages(name):
+    my_room_id = []
+    all_rooms = get_my_rooms()
+    count = 0
+    start = time.time()
+    for one_room in all_rooms:
+        if name.capitalize() in one_room.title.capitalize():
+            my_room_id = one_room.id
+    room_messages = api.messages.list(my_room_id)
+    try:
+        for message in room_messages:
+            print(message.text)
+            count += 1
+        finish = time.time()
+        elapsed = finish - start
+        print('\n' + str(count) + ' messages retrieved in ' + '{:.2f}'.format(elapsed) + ' seconds')
+    except TypeError as e:
+        print(color_red2_on + '\nRoom doesn\'t appear to exist\n' + color_red2_off)
+
 # Adding the cli commands which trigger the functions above
 cli.add_command(get_all_files_list, 'files')
 cli.add_command(retrieve_rooms, 'rooms')
 cli.add_command(fortune_spam, 'spam')
+cli.add_command(get_messages, 'messages')
 
 if __name__ == '__main__':
+    cli()
+    """
     try:
         cli()
     except TypeError as err:
         print('Not sure what shit the bed, but we\'ll blame it on you. The error is below:')
         print(color_red2_on + str(err) + color_red2_off)
+    """
