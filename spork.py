@@ -44,63 +44,6 @@ def cli():
     pass
 
 
-@click.command(short_help='Spam a foo', help='#KeepCalmAndSpamOn')
-@click.argument('channel', metavar='[channel]')
-@click.argument('spam_file', metavar='[file]')
-def fortune_spam(channel, spam_file):
-    """
-    The much vaunted 'spam' option.
-    
-    :param channel: Which room to send to
-    :param spam_file: Which file to pull fortunes from
-    :return: 
-    """
-    test_room = api.rooms.create(channel)
-    parsed_fortunes = []
-    n = 0
-    try:
-        with open(spam_file, 'r') as f:
-            temp_fortunes = f.read().split('%')
-            for item in temp_fortunes:
-                parsed_fortunes.append(item.split('%'))
-
-        for item in parsed_fortunes:
-            for a, b in enumerate(item):
-                item[a] = b.replace('\n', ' ')
-
-        while n <= len(parsed_fortunes) - 1:
-            rand_timer = randint(600, 1800)
-            rand_item = randint(0, len(parsed_fortunes) - 1)
-            message = ''.join(parsed_fortunes[rand_item])
-            api.messages.create(test_room.id, text=message)
-            print(message)
-            n += n
-            time.sleep(rand_timer)
-    except BaseException as e:
-        print('Not sure what shit the bed, but the shit looks like this:')
-        print(color_red2_on + str(e) + color_red2_off)
-
-
-@click.command(options_metavar='[no options]', short_help='return a list of channels')
-def retrieve_rooms():
-    """
-    Returns a list of rooms the user is a part of, or spaces, or whatever we're calling it today
-    :return: 
-    """
-    all_rooms = api.rooms.list()
-    rooms_dict = {}
-    try:
-        for room in all_rooms:
-            dt = datetime.datetime.strptime(room.lastActivity, "%Y-%m-%dT%H:%M:%S.%fZ")
-            rm = room.title
-            rooms_dict[str(dt.date())] = rm
-    except SparkApiError as e:
-        print(e)
-    for k, v in rooms_dict.items():
-        print(color_red2_on + '{:45}'.format(v) + color_red2_off +
-              '--' + color_blue2 + 'Last Activity: ' + color_yellow2 + str(k))
-
-
 def get_my_rooms():
     """
     Returns a list of rooms by ID
@@ -180,10 +123,10 @@ def save_files(data: dict, file_name: str, file_type: str):
 
 @click.command(options_metavar='[no options]', short_help='get list of files')
 @click.option('-f', '--filename', 'filename', help='file name to store room message data')
-@click.option('-t', '--type', 'filetype', help='Type of file: json, csv, binary, text')
-def get_all_files_list(filename, filetype):
+@click.option('-t', '--type', 'file_type', help='Type of file: json, csv, binary, text')
+def get_all_files_list(filename, file_type):
     """
-    Returns a list of file attachments in room(s)
+    Returns a list of file attachments in room(s) and stores in a user-specified file and format
     :return: 
     """
     start = time.time()
@@ -196,16 +139,70 @@ def get_all_files_list(filename, filetype):
             files_temp.append(item.files)
         rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
         tqdm.write("%sCompleted room  %s %s " % (color_red2_on, color_blue2, room.title))
-    save_files(rooms_dict, file_type=filetype, file_name=filename)
+    save_files(rooms_dict, file_type=file_type, file_name=filename)
     finish = time.time()
     elapsed = finish - start
     print('\nElapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
 
 
+@click.command(options_metavar='[no options]', short_help='return a list of channels')
+def retrieve_rooms():
+    """
+    Returns a list of rooms the user is a part of, or spaces, or whatever we're calling it today
+    :return: 
+    """
+    all_rooms = get_my_rooms()
+    rooms_dict = {}
+    for room in all_rooms:
+        dt = datetime.datetime.strptime(room.lastActivity, "%Y-%m-%dT%H:%M:%S.%fZ")
+        rm = room.title
+        rooms_dict[str(dt.date())] = rm
+    for k, v in rooms_dict.items():
+        print(color_red2_on + '{:45}'.format(v) + color_red2_off +
+              '--' + color_blue2 + 'Last Activity: ' + color_yellow2 + str(k))
+
+
+@click.command(short_help='Spam a foo', help='#KeepCalmAndSpamOn')
+@click.argument('channel', metavar='[channel]')
+@click.argument('spam_file', metavar='[file]')
+def fortune_spam(channel, spam_file):
+    """
+    The much vaunted 'spam' option.
+
+    :param channel: Which room to send to
+    :param spam_file: Which file to pull fortunes from
+    :return: 
+    """
+    test_room = api.rooms.create(channel)
+    parsed_fortunes = []
+    n = 0
+    try:
+        with open(spam_file, 'r') as f:
+            temp_fortunes = f.read().split('%')
+            for item in temp_fortunes:
+                parsed_fortunes.append(item.split('%'))
+
+        for item in parsed_fortunes:
+            for a, b in enumerate(item):
+                item[a] = b.replace('\n', ' ')
+
+        while n <= len(parsed_fortunes) - 1:
+            rand_timer = randint(600, 1800)
+            rand_item = randint(0, len(parsed_fortunes) - 1)
+            message = ''.join(parsed_fortunes[rand_item])
+            api.messages.create(test_room.id, text=message)
+            print(message)
+            n += n
+            time.sleep(rand_timer)
+    except BaseException as e:
+        print('Not sure what shit the bed, but the shit looks like this:')
+        print(color_red2_on + str(e) + color_red2_off)
+
+
 # Adding the cli commands which trigger the functions above
 cli.add_command(get_all_files_list, 'files')
-cli.add_command(fortune_spam, 'spam')
 cli.add_command(retrieve_rooms, 'rooms')
+cli.add_command(fortune_spam, 'spam')
 
 if __name__ == '__main__':
     try:
