@@ -6,14 +6,6 @@ import click
 import datetime
 from tqdm import tqdm
 import utilities
-from utilities import (
-    save_files,
-    get_my_rooms,
-    get_my_rooms_lst,
-    get_room_msg,
-    get_room_msg_lst,
-    name_to_id,
-    id_to_name)
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -54,16 +46,16 @@ def get_all_files_list(file_type):
     """
     start = time.time()
     rooms_dict = {}
-    my_rooms = get_my_rooms_lst()
+    my_rooms = utilities.get_my_rooms_lst()
     for room in tqdm(my_rooms, desc='%sTotal of all rooms completed: %s' % (color_red2_on, color_red2_off)):
-        msg_list = get_room_msg_lst(room.id)
+        msg_list = utilities.get_room_msg_lst(room.id)
         files_temp = []
         for item in msg_list:
             files_temp.append(item.files)
         rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
         tqdm.write("%sCompleted room  %s %s " % (color_red2_on, color_blue2, room.title))
     filename = ('.files.' + file_type)
-    save_files(rooms_dict, file_type=file_type, file_name=filename)
+    utilities.save_files(rooms_dict, file_type=file_type, file_name=filename)
     finish = time.time()
     elapsed = finish - start
     print('\nElapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
@@ -75,14 +67,14 @@ def retrieve_rooms():
     Returns a list of rooms the user is a part of, or spaces, or whatever we're calling it today
     :return: 
     """
-    all_rooms = get_my_rooms()
+    all_rooms = utilities.get_my_rooms()
     rooms_dict = {}
     for room in all_rooms:
         dt = datetime.datetime.strptime(room.lastActivity, "%Y-%m-%dT%H:%M:%S.%fZ")
         rm = room.title
         rm_id = room.id
         rooms_dict[rm_id] = (str(dt.date()), rm)
-        save_files(rooms_dict, '.rooms.json', 'json')
+        utilities.save_files(rooms_dict, '.rooms.json', 'json')
     for _, v in rooms_dict.items():
         (activity_date, room_title) = v
         print(color_red2_on + '{:45}'.format(room_title) + color_red2_off +
@@ -101,7 +93,7 @@ def fortune_spam(channel, spam_file):
     :param spam_file: Which file to pull fortunes from
     :return: 
     """
-    room_id = name_to_id(channel)
+    room_id = utilities.name_to_id(channel)
     parsed_fortunes = []
     n = 0
     try:
@@ -131,7 +123,7 @@ def fortune_spam(channel, spam_file):
 @click.option('-n', '--name', 'name', help='name of room')
 def get_messages(name):
     my_room_id = []
-    all_rooms = get_my_rooms()
+    all_rooms = utilities.get_my_rooms()
     count = 0
     start = time.time()
     for one_room in all_rooms:
@@ -161,7 +153,7 @@ def send_message(room: str, message: str):
     :param message:
     :return:
     """
-    room_id = name_to_id(room)
+    room_id = utilities.name_to_id(room)
     my_message = utilities.api.messages.create(room_id, text=message)
     print(my_message)
 
