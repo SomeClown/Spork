@@ -121,6 +121,30 @@ def save_files(data: dict, file_name: str, file_type: str):
             f.write(str(data))
 
 
+def name_to_id(room_name: str):
+    """
+    Takes a room name and returns its id
+    :param room_name:
+    :return:
+    """
+    rooms_list = get_my_rooms_lst()
+    for room in rooms_list:
+        if room_name in room.title:
+            return room.id
+
+
+def id_to_name(room_id: str):
+    """
+    Takes a room id and returns its name
+    :param room_id:
+    :return:
+    """
+    rooms_list = get_my_rooms_lst()
+    for room in rooms_list:
+        if room_id in room.id:
+            return room.title
+
+
 @click.command(options_metavar='[no options]', short_help='get list of files')
 @click.option('-t', '--type', 'file_type', help='Type of file: json, csv, binary, text')
 def get_all_files_list(file_type):
@@ -244,30 +268,6 @@ def send_message(room: str, message: str):
     room_id = name_to_id(room)
     my_message = api.messages.create(room_id, text=message)
     print(my_message)
-
-
-def name_to_id(room_name: str):
-    """
-    Takes a room name and returns its id
-    :param room_name:
-    :return:
-    """
-    rooms_list = get_my_rooms_lst()
-    for room in rooms_list:
-        if room_name in room.title:
-            return room.id
-
-
-def id_to_name(room_id: str):
-    """
-    Takes a room id and returns its name
-    :param room_id:
-    :return:
-    """
-    rooms_list = get_my_rooms_lst()
-    for room in rooms_list:
-        if room_id in room.id:
-            return room.title
 
 
 """ Adding the cli commands which trigger the functions above """
