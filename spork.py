@@ -176,7 +176,11 @@ def fortune_spam(channel, spam_file):
     :param spam_file: Which file to pull fortunes from
     :return: 
     """
-    test_room = api.rooms.create(channel)
+    all_rooms = get_my_rooms_lst()
+    room_id = ''
+    for thing in all_rooms:
+        if channel in thing.title:
+            room_id = thing.id
     parsed_fortunes = []
     n = 0
     try:
@@ -193,7 +197,7 @@ def fortune_spam(channel, spam_file):
             rand_timer = randint(600, 1800)
             rand_item = randint(0, len(parsed_fortunes) - 1)
             message = ''.join(parsed_fortunes[rand_item])
-            api.messages.create(test_room.id, text=message)
+            api.messages.create(room_id, text=message)
             print(message)
             n += n
             time.sleep(rand_timer)
