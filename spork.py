@@ -86,7 +86,7 @@ def get_room_msg_lst(room_id):
 
 def flatten(lst: list):
     """
-    Not used at this point. Flattens a nested list
+    Not used at this point. Flattens a nested list. Also not quite working, so, there's that.
     :param lst: 
     :return: 
     """
@@ -170,7 +170,8 @@ def retrieve_rooms():
 @click.argument('spam_file', metavar='[file]')
 def fortune_spam(channel, spam_file):
     """
-    The much vaunted 'spam' option.
+    Spams a room with a line from the include fortunes database, you know, as one does. Can just
+    as easily spam from any other file as well, it's just written at the moment for this.
 
     :param channel: Which room to send to
     :param spam_file: Which file to pull fortunes from
@@ -240,11 +241,33 @@ def send_message(room: str, message: str):
     :param message:
     :return:
     """
-    all_rooms = get_my_rooms_lst()
-    for thing in all_rooms:
-        if room in thing.title:
-            my_message = api.messages.create(thing.id, text=message)
-            print(my_message)
+    room_id = name_to_id(room)
+    my_message = api.messages.create(room_id, text=message)
+    print(my_message)
+
+
+def name_to_id(room_name: str):
+    """
+    Takes a room name and returns its id
+    :param room_name:
+    :return:
+    """
+    rooms_list = get_my_rooms_lst()
+    for room in rooms_list:
+        if room_name in room.title:
+            return room.id
+
+
+def id_to_name(room_id: str):
+    """
+    Takes a room id and returns its name
+    :param room_id:
+    :return:
+    """
+    rooms_list = get_my_rooms_lst()
+    for room in rooms_list:
+        if room_id in room.id:
+            return room.title
 
 
 """ Adding the cli commands which trigger the functions above """
