@@ -5,6 +5,7 @@ import time
 import click
 import datetime
 from tqdm import tqdm
+import utilities
 from utilities import (
     save_files,
     get_my_rooms,
@@ -12,8 +13,7 @@ from utilities import (
     get_room_msg,
     get_room_msg_lst,
     name_to_id,
-    id_to_name,
-    init)
+    id_to_name)
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -42,7 +42,7 @@ def cli():
     Quick and dirty proof of concept. Exercises the Spark API without killing any kittens.
     :return: 
     """
-    init()
+    pass
 
 
 @click.command(options_metavar='[no options]', short_help='get list of files')
@@ -118,7 +118,7 @@ def fortune_spam(channel, spam_file):
             rand_timer = randint(600, 1800)
             rand_item = randint(0, len(parsed_fortunes) - 1)
             message = ''.join(parsed_fortunes[rand_item])
-            api.messages.create(room_id, text=message)
+            utilities.api.messages.create(room_id, text=message)
             print(message)
             n += n
             time.sleep(rand_timer)
@@ -137,7 +137,7 @@ def get_messages(name):
     for one_room in all_rooms:
         if name.capitalize() in one_room.title.capitalize():
             my_room_id = one_room.id
-    room_messages = api.messages.list(my_room_id)
+    room_messages = utilities.api.messages.list(my_room_id)
     try:
         for message in room_messages:
             """ Formatting here can be better, but it's serviceable for now """
@@ -162,7 +162,7 @@ def send_message(room: str, message: str):
     :return:
     """
     room_id = name_to_id(room)
-    my_message = api.messages.create(room_id, text=message)
+    my_message = utilities.api.messages.create(room_id, text=message)
     print(my_message)
 
 
