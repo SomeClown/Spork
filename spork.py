@@ -14,7 +14,7 @@ from tqdm import tqdm
 __author__ = "SomeClown"
 __license__ = "MIT"
 __maintainer__ = "Teren Bryson"
-__email__ = "teren@packetqueue.net"
+__email__ = "teren@wwt.com"
 
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -215,19 +215,40 @@ def get_messages(name):
     room_messages = api.messages.list(my_room_id)
     try:
         for message in room_messages:
-            print(message.text)
+            """ Formatting here can be better, but it's serviceable for now """
+            print(color_blue2 + '{:45}'.format(message.personEmail) + color_off + message.text)
             count += 1
         finish = time.time()
         elapsed = finish - start
         print('\n' + str(count) + ' messages retrieved in ' + '{:.2f}'.format(elapsed) + ' seconds')
-    except TypeError as e:
+    except TypeError:
+        """ This is really a placeholder error. Need to get more specific in error handling here """
         print(color_red2_on + '\nRoom doesn\'t appear to exist\n' + color_red2_off)
 
-# Adding the cli commands which trigger the functions above
+
+@click.command(short_help='Send message to a room')
+@click.option('-r', '--room', 'room', help='room')
+@click.option('-m', '--message', 'message', help='message')
+def send_message(room: str, message: str):
+    """
+    Send a message to a given room
+    :param room:
+    :param message:
+    :return:
+    """
+    all_rooms = get_my_rooms_lst()
+    for thing in all_rooms:
+        if room in thing.title:
+            my_message = api.messages.create(thing.id, text=message)
+            print(my_message)
+
+
+""" Adding the cli commands which trigger the functions above """
 cli.add_command(get_all_files_list, 'files')
 cli.add_command(retrieve_rooms, 'rooms')
 cli.add_command(fortune_spam, 'spam')
 cli.add_command(get_messages, 'messages')
+cli.add_command(send_message, 'send')
 
 if __name__ == '__main__':
     cli()
