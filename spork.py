@@ -201,11 +201,7 @@ def fortune_spam(channel, spam_file):
     :param spam_file: Which file to pull fortunes from
     :return: 
     """
-    all_rooms = get_my_rooms_lst()
-    room_id = ''
-    for thing in all_rooms:
-        if channel in thing.title:
-            room_id = thing.id
+    room_id = name_to_id(channel)
     parsed_fortunes = []
     n = 0
     try:
