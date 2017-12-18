@@ -87,7 +87,7 @@ def display_rooms():
 @click.command(short_help='Spam a foo', help='#KeepCalmAndSpamOn')
 @click.argument('channel', metavar='[channel]')
 @click.argument('spam_file', metavar='[file]')
-def fortune_spam(channel, spam_file):
+def fortune_spam(channel: str, spam_file: str):
     """
     Spams a room with a line from the include fortunes database, you know, as one does. Can just
     as easily spam from any other file as well, it's just written at the moment for this.
@@ -125,12 +125,12 @@ def fortune_spam(channel, spam_file):
 @click.command(short_help='List messages in a room', help='List messages in a room')
 @click.option('-n', '--name', 'name', help='name of room')
 @click.option('-m-', '--max', 'maximum', help='maximum messages to retrieve')
-def get_messages(name, maximum=10):
+def get_messages(name: str, maximum: int):
     """
     Get messages in a room
     
-    :param name: 
-    :param maximum: 
+    :param name: Room name to retrieve messages from
+    :param maximum: Number of messages to retrieve - seems to be ignored by the API
     :return: 
     """
     my_room_id = []
@@ -159,8 +159,8 @@ def send_message(room: str, message: str):
     """
     Send a message to a given room
     
-    :param room:
-    :param message:
+    :param room: Name of room to send message to
+    :param message: Message to send
     :return:
     """
     room_id = utilities.name_to_id(room)
@@ -176,9 +176,9 @@ def archive(name: str, file_t: str, everything: bool):
     """
     Archives everything except file attachments (messages, people, etc.) in all rooms
     
-    :param name: 
-    :param file_t: 
-    :param everything: 
+    :param name: Room to archive, if selectinbg only one room
+    :param file_t: File type to store archive as (json, text, csv, pickle)
+    :param everything: Boolean flag to archive entire Spark ecosystem to which user belongs
     :return: 
     """
     if name:
