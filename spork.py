@@ -39,30 +39,32 @@ def cli():
 
 @click.command(options_metavar='[no options]', short_help='get list of files')
 @click.option('-t', '--type', 'file_type', help='Type of file: json, csv, binary, text')
-def get_all_files_list(file_type):
+def get_all_files_list(file_type: str):
     """
     Returns a list of file attachments in room(s) and stores in a user-specified file and format
+    
+    :param file_type: type of file in which to store the data
     :return: 
     """
     start = time.time()
-    rooms_dict = {}
     my_rooms = utilities.get_my_rooms_lst()
     for room in tqdm(my_rooms, desc='%sTotal of all rooms completed: %s' % (color_red2_on, color_red2_off)):
+        rooms_dict = {}
         msg_list = utilities.get_room_msg_lst(room.id)
         files_temp = []
         for item in msg_list:
             files_temp.append(item.files)
         rooms_dict[room.id] = (len(msg_list), room.title, files_temp)
         tqdm.write("%sCompleted room  %s %s " % (color_red2_on, color_blue2, room.title))
-    filename = ('.files.' + file_type)
-    utilities.save_files(rooms_dict, file_type=file_type, file_name=filename)
+        filename = (room.id + '.' + file_type)
+        utilities.save_files(rooms_dict, file_type=file_type, file_name=filename)
     finish = time.time()
     elapsed = finish - start
     print('\nElapsed time: ' + '{:.2f}'.format(elapsed) + ' seconds')
 
 
 @click.command(options_metavar='[no options]', short_help='return a list of channels')
-def retrieve_rooms():
+def display_rooms():
     """
     Returns a list of rooms the user is a part of, or spaces, or whatever we're calling it today
     :return: 
@@ -121,7 +123,15 @@ def fortune_spam(channel, spam_file):
 
 @click.command(short_help='List messages in a room', help='List messages in a room')
 @click.option('-n', '--name', 'name', help='name of room')
-def get_messages(name):
+@click.option('-m-', '--max', 'maximum', help='maximum messages to retrieve')
+def get_messages(name, maximum=10):
+    """
+    Get messages in a room
+    
+    :param name: 
+    :param maximum: 
+    :return: 
+    """
     my_room_id = []
     all_rooms = utilities.get_my_rooms()
     count = 0
@@ -129,18 +139,16 @@ def get_messages(name):
     for one_room in all_rooms:
         if name.capitalize() in one_room.title.capitalize():
             my_room_id = one_room.id
-    room_messages = utilities.api.messages.list(my_room_id)
-    try:
-        for message in room_messages:
+    print('\nThis may take a while if the room has a lot of messages\n')
+    room_messages = [message for message in utilities.api.messages.list(roomId=my_room_id, max=maximum)]
+    for message in reversed(room_messages):
+        if message.personEmail and message.text is not None:
             """ Formatting here can be better, but it's serviceable for now """
             print(color_blue2 + '{:45}'.format(message.personEmail) + color_off + message.text)
             count += 1
-        finish = time.time()
-        elapsed = finish - start
-        print('\n' + str(count) + ' messages retrieved in ' + '{:.2f}'.format(elapsed) + ' seconds')
-    except TypeError:
-        """ This is really a placeholder error. Need to get more specific in error handling here """
-        print(color_red2_on + '\nRoom doesn\'t appear to exist\n' + color_red2_off)
+    finish = time.time()
+    elapsed = finish - start
+    print('\n' + str(count) + ' messages retrieved in ' + '{:.2f}'.format(elapsed) + ' seconds')
 
 
 @click.command(short_help='Send message to a room')
@@ -149,6 +157,7 @@ def get_messages(name):
 def send_message(room: str, message: str):
     """
     Send a message to a given room
+    
     :param room:
     :param message:
     :return:
@@ -158,12 +167,29 @@ def send_message(room: str, message: str):
     print(my_message)
 
 
+@click.command(short_help='Archives room(s)', help='Get some coffee, this is going to take a while')
+@click.option('-r', '--room', 'room', help='Room to archive.')
+@click.option('-t', '--type', 'file_type', help='Type of file: json, csv, binary, text')
+@click.option('-a', '--all', is_flag=True, help='You really want to do this?')
+def archive(room: str, file_type:str, all:bool):
+    """
+    Archives everything except file attachments (messages, people, etc.) in all rooms
+    
+    :param room: 
+    :param file_type: 
+    :param all: 
+    :return: 
+    """
+    pass
+
+
 """ Adding the cli commands which trigger the functions above """
 cli.add_command(get_all_files_list, 'files')
-cli.add_command(retrieve_rooms, 'rooms')
+cli.add_command(display_rooms, 'rooms')
 cli.add_command(fortune_spam, 'spam')
 cli.add_command(get_messages, 'messages')
 cli.add_command(send_message, 'send')
+cli.add_command(archive, 'archive')
 
 if __name__ == '__main__':
     cli()

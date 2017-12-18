@@ -24,19 +24,24 @@ def save_files(data: dict, file_name: str, file_type: str):
     :param file_type: one of json, text, csv, pickle
     :return: 
     """
+    complete_file_name = './.data/' + file_name
     if file_type == 'json':
+        os.makedirs(os.path.dirname(complete_file_name), exist_ok=True)
         name = json.dumps(data)
-        with open(file_name, 'w') as f:
+        with open(complete_file_name, 'w') as f:
             f.write(name)
     elif file_type == 'pkl':
-        with open(file_name, 'wb') as f:
+        os.makedirs(os.path.dirname(complete_file_name), exist_ok=True)
+        with open(complete_file_name, 'wb') as f:
             pickle.dump(data, f)
     elif file_type == 'csv':
-        file = csv.writer(open(file_name, "w"))
+        os.makedirs(os.path.dirname(complete_file_name), exist_ok=True)
+        file = csv.writer(open(complete_file_name, "w"))
         for key, value in data.items():
             file.writerow([key, value])
     elif file_type == 'text':
-        with open(file_name, "w") as f:
+        os.makedirs(os.path.dirname(complete_file_name), exist_ok=True)
+        with open(complete_file_name, "w") as f:
             f.write(str(data))
 
 
@@ -76,7 +81,7 @@ def get_room_msg_lst(room_id):
     :param room_id: 
     :return: 
     """
-    room_messages = [item for item in api.messages.list(roomId=room_id) if item.files is not None]
+    room_messages = [item for item in api.messages.list(roomId=room_id, max=10) if item.files is not None]
     return room_messages
 
 
