@@ -117,7 +117,7 @@ def fortune_spam(channel, spam_file):
             n += n
             time.sleep(rand_timer)
     except BaseException as e:
-        print('Not sure what shit the bed, but the shit looks like this:')
+        print('Herp-derp')
         print(color_red2_on + str(e) + color_red2_off)
 
 
@@ -168,20 +168,19 @@ def send_message(room: str, message: str):
 
 
 @click.command(short_help='Archives room(s)', help='Get some coffee, this is going to take a while')
-@click.option('-r', '--room', 'room', help='Room to archive.')
-@click.option('-t', '--type', 'file_type', help='Type of file: json, csv, binary, text')
-@click.option('-a', '--all', is_flag=True, help='You really want to do this?')
-def archive(room: str, file_type:str, all:bool):
+@click.option('-r', '--room', 'name', help='Room to archive.')
+@click.option('-t', '--type', 'file_t', help='Type of file: json, csv, binary, text')
+@click.option('-e', '--everything', is_flag=True, help='You really want to do this?')
+def archive(name: str, file_t: str, everything: bool):
     """
     Archives everything except file attachments (messages, people, etc.) in all rooms
     
-    :param room: 
-    :param file_type: 
-    :param all: 
+    :param name: 
+    :param file_t: 
+    :param everything: 
     :return: 
     """
     pass
-
 
 """ Adding the cli commands which trigger the functions above """
 cli.add_command(get_all_files_list, 'files')
@@ -197,6 +196,6 @@ if __name__ == '__main__':
     try:
         cli()
     except TypeError as err:
-        print('Not sure what shit the bed, but we\'ll blame it on you. The error is below:')
+        print('Herp-derp')
         print(color_red2_on + str(err) + color_red2_off)
     """
