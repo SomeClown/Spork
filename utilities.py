@@ -70,7 +70,7 @@ def get_room_msg(room_id):
     :param room_id: 
     :return: 
     """
-    room_messages = [item for item in api.messages.list(roomId=room_id) if item.files is not None]
+    room_messages = [item for item in api.messages.list(roomId=room_id)]
     for msg in room_messages:
         yield msg
 
@@ -81,7 +81,7 @@ def get_room_msg_lst(room_id):
     :param room_id: 
     :return: 
     """
-    room_messages = [item for item in api.messages.list(roomId=room_id, max=10) if item.files is not None]
+    room_messages = [item for item in api.messages.list(roomId=room_id)]
     return room_messages
 
 

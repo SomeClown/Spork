@@ -6,6 +6,7 @@ import click
 import datetime
 from tqdm import tqdm
 import utilities
+import json
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -140,7 +141,7 @@ def get_messages(name, maximum=10):
         if name.capitalize() in one_room.title.capitalize():
             my_room_id = one_room.id
     print('\nThis may take a while if the room has a lot of messages\n')
-    room_messages = [message for message in utilities.api.messages.list(roomId=my_room_id, max=maximum)]
+    room_messages = utilities.get_room_msg_lst(room_id=my_room_id)
     for message in reversed(room_messages):
         if message.personEmail and message.text is not None:
             """ Formatting here can be better, but it's serviceable for now """
@@ -180,7 +181,19 @@ def archive(name: str, file_t: str, everything: bool):
     :param everything: 
     :return: 
     """
-    pass
+    if name:
+        count = 0
+        print('\nThis may take a while if the room has a lot of messages\n')
+        start = time.time()
+        my_room_id = utilities.name_to_id(name)
+        msg_lst = utilities.get_room_msg_lst(my_room_id)
+        with open('test.txt', 'w') as f:
+            for item in msg_lst:
+                print(repr(item) + '\n')
+        finish = time.time()
+        elapsed = finish - start
+        print('\n' + str(count) + ' messages retrieved in ' + '{:.2f}'.format(elapsed) + ' seconds')
+
 
 """ Adding the cli commands which trigger the functions above """
 cli.add_command(get_all_files_list, 'files')
