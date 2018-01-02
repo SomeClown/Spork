@@ -3,7 +3,7 @@ import pickle
 import csv
 from ciscosparkapi import CiscoSparkAPI
 import os
-
+from itertools import islice
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -79,8 +79,9 @@ def get_room_msg_lst(room_id):
     :param room_id: 
     :return: 
     """
-    room_messages = [item for item in api.messages.list(roomId=room_id)]
-    return room_messages
+    room_messages = api.messages.list(roomId=room_id)
+    short_list = list(islice(room_messages, 10))
+    return short_list
 
 
 def flatten(lst: list):
