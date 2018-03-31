@@ -6,7 +6,6 @@ import click
 import datetime
 from tqdm import tqdm
 import utilities
-import json
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -124,7 +123,7 @@ def fortune_spam(channel: str, spam_file: str):
 
 @click.command(short_help='List messages in a room', help='List messages in a room')
 @click.option('-n', '--name', 'name', help='name of room')
-@click.option('-m-', '--max', 'maximum', help='maximum messages to retrieve')
+@click.option('-m', '--max', 'maximum', default=10, help='maximum messages to retrieve')
 def get_messages(name: str, maximum: int):
     """
     Get messages in a room
@@ -141,7 +140,7 @@ def get_messages(name: str, maximum: int):
         if name.capitalize() in one_room.title.capitalize():
             my_room_id = one_room.id
     print('\nThis may take a while if the room has a lot of messages\n')
-    room_messages = utilities.get_room_msg_lst(room_id=my_room_id)
+    room_messages = utilities.get_room_msg_lst(room_id=my_room_id, max_msg=maximum)
     for message in reversed(room_messages):
         if message.personEmail and message.text is not None:
             """ Formatting here can be better, but it's serviceable for now """

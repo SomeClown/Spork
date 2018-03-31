@@ -73,14 +73,15 @@ def get_room_msg(room_id):
         yield msg
 
 
-def get_room_msg_lst(room_id):
+def get_room_msg_lst(room_id: str, max_msg: int):
     """
     Returns messages from a given room ID
-    :param room_id: 
+    :param room_id:
+    :param max_msg: 
     :return: 
     """
     room_messages = api.messages.list(roomId=room_id)
-    short_list = list(islice(room_messages, 10))
+    short_list = list(islice(room_messages, max_msg))
     return short_list
 
 
