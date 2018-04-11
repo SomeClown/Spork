@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Boolean
+from sqlalchemy import Column, String, Boolean, ForeignKey
 from sqlalchemy import create_engine
 
 __author__ = "SomeClown"
@@ -35,10 +35,10 @@ class Room(Base):
 
 
 class Message(Base):
-    __tablename__='messages'
+    __tablename__ = 'messages'
 
     message_id = Column(String, primary_key=True)
-    room_id = Column(String)
+    room_id = Column(String, ForeignKey('rooms.room_id'))
     room_type = Column(String)
     text = Column(String)
     person_id = Column(String)
@@ -53,6 +53,34 @@ class Message(Base):
         self.person_email = person_id
         self.person_email = person_email
         self.created = created
+
+
+class People(Base):
+    __tablename__ = 'people'
+
+    person_id = Column(String, primary_key=True)
+    emails = Column(String, ForeignKey('messages.person_email'))
+    displayName = Column(String)
+    nickName = Column(String)
+    firstName = Column(String)
+    lastName = Column(String)
+    avatar = Column(String)
+    org_id = Column(String)
+    created = Column(String)
+    person_type = Column(String)
+
+    def __init__(self, person_id, emails, displayName, nickName, firstName, lastName,
+                 avatar, org_id, created, person_type):
+        self.person_id = person_id
+        self.emails = emails
+        self.displayName = displayName
+        self.nickName = nickName
+        self.firstName = firstName
+        self.lastName = lastName
+        self.avatar = avatar
+        self.org_id = org_id
+        self.created = created
+        self.person_type = person_type
 
 
 Base.metadata.create_all(engine)
