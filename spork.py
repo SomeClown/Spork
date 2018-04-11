@@ -6,7 +6,6 @@ import click
 import datetime
 from tqdm import tqdm
 import utilities
-import json
 
 __author__ = "SomeClown"
 __license__ = "MIT"
