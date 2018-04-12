@@ -101,7 +101,7 @@ class Teams(Base):
 class Memberships(Base):
     __tablename__ = 'memberships'
 
-    membership_id = Column(String)
+    membership_id = Column(String, primary_key=True)
     room_id = Column(String, ForeignKey('rooms.room_id'))
     person_id = Column(String, ForeignKey('people.person_id'))
     person_email = Column(String, ForeignKey('people.emails'))
