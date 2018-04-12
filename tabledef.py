@@ -21,15 +21,17 @@ class Room(Base):
     room_type = Column(String)
     is_locked = Column(Boolean)
     last_activity = Column(String)
+    team_id = Column(String, ForeignKey('teams.team_id'))
     creator_id = Column(String, ForeignKey('people.person_id'))
     created = Column(String)
 
-    def __init__(self, room_id, title, room_type, is_locked, last_activity, creator_id, created):
+    def __init__(self, room_id, title, room_type, is_locked, last_activity, team_id, creator_id, created):
         self.room_id = room_id
         self.title = title
         self.room_type = room_type
         self.is_locked = is_locked
         self.last_activity = last_activity
+        self.team_id = team_id
         self.creator_id = creator_id
         self.created = created
 
