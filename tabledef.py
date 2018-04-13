@@ -14,6 +14,9 @@ engine = create_engine('sqlite:///spork.db', echo=True)
 
 
 class Room(Base):
+    """
+    database model for a room object
+    """
     __tablename__ = 'rooms'
 
     room_id = Column(String, primary_key=True)
@@ -37,6 +40,9 @@ class Room(Base):
 
 
 class Message(Base):
+    """
+    database model for a message object
+    """
     __tablename__ = 'messages'
 
     message_id = Column(String, primary_key=True)
@@ -58,6 +64,9 @@ class Message(Base):
 
 
 class People(Base):
+    """
+    database model for a people object
+    """
     __tablename__ = 'people'
 
     person_id = Column(String, primary_key=True)
@@ -86,6 +95,9 @@ class People(Base):
 
 
 class Teams(Base):
+    """
+    database model for a teams object
+    """
     __tablename__ = 'teams'
 
     team_id = Column(String, primary_key=True)
@@ -101,6 +113,9 @@ class Teams(Base):
 
 
 class Memberships(Base):
+    """
+    database model for a memberships object
+    """
     __tablename__ = 'memberships'
 
     membership_id = Column(String, primary_key=True)

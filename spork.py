@@ -6,8 +6,6 @@ import click
 import datetime
 from tqdm import tqdm
 import utilities
-import requests
-import json
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -68,33 +66,18 @@ def get_all_files_list(file_type: str):
 @click.command(options_metavar='[no options]', short_help='return a list of channels')
 def display_rooms():
     """
-    Returns a list of rooms the user is a part of, or spaces, or whatever we're calling it today
-    :return: 
-    """
-    all_rooms = utilities.get_my_rooms()
-    rooms_dict = {}
-    for room in all_rooms:
-        dt = datetime.datetime.strptime(room.lastActivity, "%Y-%m-%dT%H:%M:%S.%fZ")
-        rm = room.title
-        rm_id = room.id
-        rooms_dict[rm_id] = (str(dt.date()), rm)
-        utilities.save_files(rooms_dict, '.rooms.json', 'json')
-    for _, v in rooms_dict.items():
-        (activity_date, room_title) = v
-        print(color_red2_on + '{:45}'.format(room_title) + color_red2_off +
-              '--' + color_blue2 + 'Last Activity: ' + color_yellow2 + str(activity_date))
-
-
-@click.command(options_metavar='[no options]', short_help='return a list of channels')
-def testing():
-    """
-    Testing
+    Print a listing of all rooms and last activity date
     :return: 
     """
     get_rooms = utilities.get_stuff(suffix='rooms')
     rooms = utilities.RoomsObject(get_rooms)
-    # print(len(rooms))
-    rooms.titles()
+    count = 0
+    while count <= len(rooms) - 1:
+        dt = datetime.datetime.strptime(rooms.last_activity(count), "%Y-%m-%dT%H:%M:%S.%fZ")
+        print(color_blue2 + str('{:2}'.format(count + 1)) +
+              '. ' + color_red2_on + '{:50}'.format(rooms.title(count))
+              + color_blue2 + 'Last Activity: ' + color_yellow2 + str(dt.date()))
+        count += 1
 
 
 @click.command(short_help='Spam a foo', help='#KeepCalmAndSpamOn')
@@ -215,7 +198,6 @@ cli.add_command(fortune_spam, 'spam')
 cli.add_command(get_messages, 'messages')
 cli.add_command(send_message, 'send')
 cli.add_command(archive, 'archive')
-cli.add_command(testing, 'test')
 
 if __name__ == '__main__':
     cli()

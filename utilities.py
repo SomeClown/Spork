@@ -111,16 +111,6 @@ class RoomsObject(object):
         """
         return self.rooms['items'][position]['created']
 
-    def titles(self):
-        """
-        returns a title listing of all rooms
-        :return: 
-        """
-        count = 0
-        while count <= self.__len__() - 1:
-            print(str(count + 1) + '. ' + self.title(count))
-            count += 1
-
     def __repr__(self):
         return "I'm sorry, Dave. I'm afraid I can't do that."
 
