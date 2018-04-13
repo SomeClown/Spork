@@ -4,6 +4,7 @@ import csv
 from ciscosparkapi import CiscoSparkAPI
 import os
 from itertools import islice
+import requests
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -12,6 +13,147 @@ __email__ = "teren@wwt.com"
 
 spark_token = os.environ["SPARK_ACCESS_TOKEN"]
 api = CiscoSparkAPI()
+api_url_base = 'https://api.ciscospark.com/v1/'
+headers = {'Content-Type': 'application/json', 'User-Agent': 'Umbrella Corporation',
+           'Authorization': 'Bearer {0}'.format(spark_token)}
+color_black2 = "\033[1;30m"
+color_red2_on = "\033[01;31m"
+color_red2_off = "\33[00m"
+color_green2 = "\033[1;32m"
+color_yellow2 = "\033[1;33m"
+color_blue2 = "\033[1;34m"
+color_purple2 = "\033[1;35m"
+color_cyan2 = "\033[1;36m"
+color_white2 = "\033[1;37m"
+color_off = "\33[00m"
+
+
+class RoomsObject(object):
+    """
+    Modeling an object to hold rooms data... for use if we rewrite the application to
+    use native REST API calls via Response library instead of CiscoSparkAPI SDK
+    """
+    def __init__(self, data):
+        self.rooms = data
+
+    def count(self):
+        """
+        returns number of items (rooms) in the incoming json list
+        :return: int
+        """
+        return len(self.rooms['items'])
+
+    def __len__(self):
+        my_length = self.count()
+        return my_length
+
+    def room_id(self, position: int):
+        """
+        returns one title, given a list position number
+        :param position:
+        :return: 
+        """
+        return self.rooms['items'][position]['id']
+
+    def title(self, position: int):
+        """
+        returns one title, given a list position number
+        :param position: 
+        :return: 
+        """
+        return self.rooms['items'][position]['title']
+
+    def room_type(self, position: int):
+        """
+        returns one room type, given a list position number
+        :param position:
+        :return: 
+        """
+        return self.rooms['items'][position]['type']
+
+    def is_locked(self, position: int):
+        """
+        returns one instance of isLocked, given a list position number
+        :param position:
+        :return: 
+        """
+        return self.rooms['items'][position]['isLocked']
+
+    def last_activity(self, position: int):
+        """
+        returns one instance of lastActivity, given a list position number
+        :param position:
+        :return: 
+        """
+        return self.rooms['items'][position]['lastActivity']
+
+    def team_id(self, position: int):
+        """
+        returns one instance of teamId, given a list position number
+        :param position:
+        :return: 
+        """
+        return self.rooms['items'][position]['teamId']
+
+    def creator_id(self, position: int):
+        """
+        returns one instance of creatorId, given a list position number
+        :param position:
+        :return: 
+        """
+        return self.rooms['items'][position]['creatorId']
+
+    def created(self, position: int):
+        """
+        returns one instance of created, given a list position number
+        :param position:
+        :return: 
+        """
+        return self.rooms['items'][position]['created']
+
+    def titles(self):
+        """
+        returns a title listing of all rooms
+        :return: 
+        """
+        count = 0
+        while count <= self.__len__() - 1:
+            print(str(count + 1) + '. ' + self.title(count))
+            count += 1
+
+    def __repr__(self):
+        return "I'm sorry, Dave. I'm afraid I can't do that."
+
+
+def get_stuff(suffix: str):
+    """
+    return a python response object to calling object
+    :param: suffix
+    :return: json object
+    """
+    api_url = (api_url_base + suffix)
+    response = requests.get(api_url, headers=headers)
+    if response.status_code == 200:
+        return json.loads(response.content.decode('utf-8'))
+    elif response.status_code >= 500:
+        print(color_red2_on + '\n[!] [{0}] Server Error'.format(response.status_code))
+        return None
+    elif response.status_code == 404:
+        print(color_red2_on + '\n[!] [{0}] URL not found: [{1}]'.format(response.status_code, api_url))
+        return None
+    elif response.status_code == 401:
+        print(color_red2_on + '\n[!] [{0}] Authentication Failed'.format(response.status_code))
+        return None
+    elif response.status_code == 400:
+        print(color_red2_on + '\n[!] [{0}] Bad Request'.format(response.status_code))
+        return None
+    elif response.status_code >= 300:
+        print(color_red2_on + '\n[!] [{0}] Unexpected Redirect'.format(response.status_code))
+        return None
+    else:
+        print(color_red2_on + '\n[?] Unexpected Error: [HTTP {0}]: '
+                              'Content: {1}'.format(response.status_code, response.content))
+        return None
 
 
 def save_files(data: dict, file_name: str, file_type: str):

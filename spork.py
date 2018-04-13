@@ -6,6 +6,8 @@ import click
 import datetime
 from tqdm import tqdm
 import utilities
+import requests
+import json
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -81,6 +83,18 @@ def display_rooms():
         (activity_date, room_title) = v
         print(color_red2_on + '{:45}'.format(room_title) + color_red2_off +
               '--' + color_blue2 + 'Last Activity: ' + color_yellow2 + str(activity_date))
+
+
+@click.command(options_metavar='[no options]', short_help='return a list of channels')
+def testing():
+    """
+    Testing
+    :return: 
+    """
+    get_rooms = utilities.get_stuff(suffix='rooms')
+    rooms = utilities.RoomsObject(get_rooms)
+    # print(len(rooms))
+    rooms.titles()
 
 
 @click.command(short_help='Spam a foo', help='#KeepCalmAndSpamOn')
@@ -201,6 +215,7 @@ cli.add_command(fortune_spam, 'spam')
 cli.add_command(get_messages, 'messages')
 cli.add_command(send_message, 'send')
 cli.add_command(archive, 'archive')
+cli.add_command(testing, 'test')
 
 if __name__ == '__main__':
     cli()
