@@ -203,8 +203,9 @@ def testing_db():
     rooms = utilities.RoomsObject(get_rooms)
     count = 0
     while count <= len(rooms) - 1:
-        my_entry = Room(rooms.room_id(count), rooms.title(count), rooms.room_type(count), rooms.is_locked(count),
-                        rooms.last_activity(count), 0, rooms.creator_id(count), rooms.created(count))
+        my_entry = Room(rooms.room_id(count), rooms.title(count), rooms.room_type(count),
+                        rooms.is_locked(count), rooms.last_activity(count), rooms.team_id(count),
+                        rooms.creator_id(count), rooms.created(count))
         session.add(my_entry)
         count += 1
     session.commit()

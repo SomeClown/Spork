@@ -53,7 +53,10 @@ class RoomsObject(object):
         :param position:
         :return: 
         """
-        return self.rooms['items'][position]['id']
+        if 'id' in self.rooms['items'][position].keys():
+            return self.rooms['items'][position]['id']
+        else:
+            return 0
 
     def title(self, position: int):
         """
@@ -61,7 +64,10 @@ class RoomsObject(object):
         :param position: 
         :return: 
         """
-        return self.rooms['items'][position]['title']
+        if 'title' in self.rooms['items'][position].keys():
+            return self.rooms['items'][position]['title']
+        else:
+            return 0
 
     def room_type(self, position: int):
         """
@@ -69,7 +75,10 @@ class RoomsObject(object):
         :param position:
         :return: 
         """
-        return self.rooms['items'][position]['type']
+        if 'type' in self.rooms['items'][position].keys():
+            return self.rooms['items'][position]['type']
+        else:
+            return 0
 
     def is_locked(self, position: int):
         """
@@ -77,7 +86,10 @@ class RoomsObject(object):
         :param position:
         :return: 
         """
-        return self.rooms['items'][position]['isLocked']
+        if 'isLocked' in self.rooms['items'][position].keys():
+            return self.rooms['items'][position]['isLocked']
+        else:
+            return 0
 
     def last_activity(self, position: int):
         """
@@ -85,7 +97,10 @@ class RoomsObject(object):
         :param position:
         :return: 
         """
-        return self.rooms['items'][position]['lastActivity']
+        if 'lastActivity' in self.rooms['items'][position].keys():
+            return self.rooms['items'][position]['lastActivity']
+        else:
+            return 0
 
     def team_id(self, position: int):
         """
@@ -93,7 +108,10 @@ class RoomsObject(object):
         :param position:
         :return: 
         """
-        return self.rooms['items'][position]['teamId']
+        if 'teamId' in self.rooms['items'][position].keys():
+            return self.rooms['items'][position]['teamId']
+        else:
+            return 0
 
     def creator_id(self, position: int):
         """
@@ -101,7 +119,10 @@ class RoomsObject(object):
         :param position:
         :return: 
         """
-        return self.rooms['items'][position]['creatorId']
+        if 'creatorId' in self.rooms['items'][position].keys():
+            return self.rooms['items'][position]['creatorId']
+        else:
+            return 0
 
     def created(self, position: int):
         """
@@ -109,7 +130,10 @@ class RoomsObject(object):
         :param position:
         :return: 
         """
-        return self.rooms['items'][position]['created']
+        if 'created' in self.rooms['items'][position].keys():
+            return self.rooms['items'][position]['created']
+        else:
+            return 0
 
     def __repr__(self):
         return "I'm sorry, Dave. I'm afraid I can't do that."
