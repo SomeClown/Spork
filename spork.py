@@ -6,7 +6,6 @@ import click
 import datetime
 from tqdm import tqdm
 import utilities
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from tabledef import *
 
@@ -195,20 +194,24 @@ def archive(name: str, file_t: str, everything: bool):
 
 
 @click.command(options_metavar='[no options]', short_help='testing')
-def testing_db():
+@click.option('-r', '--rooms', is_flag=True, help='populate rooms database table')
+def testing_db(rooms: bool):
     my_engine = create_engine('sqlite:///spork.db', echo=True)
     my_session = sessionmaker(bind=my_engine)
     session = my_session()
-    get_rooms = utilities.get_stuff(suffix='rooms')
-    rooms = utilities.RoomsObject(get_rooms)
-    count = 0
-    while count <= len(rooms) - 1:
-        my_entry = Room(rooms.room_id(count), rooms.title(count), rooms.room_type(count),
-                        rooms.is_locked(count), rooms.last_activity(count), rooms.team_id(count),
-                        rooms.creator_id(count), rooms.created(count))
-        session.add(my_entry)
-        count += 1
-    session.commit()
+    if rooms:
+        get_rooms = utilities.get_stuff(suffix='rooms')
+        rooms = utilities.RoomsObject(get_rooms)
+        count = 0
+        while count <= len(rooms) - 1:
+            my_entry = Room(rooms.room_id(count), rooms.title(count), rooms.room_type(count),
+                            rooms.is_locked(count), rooms.last_activity(count), rooms.team_id(count),
+                            rooms.creator_id(count), rooms.created(count))
+            session.add(my_entry)
+            count += 1
+        session.commit()
+    else:
+        pass
 
 """ Adding the cli commands which trigger the functions above """
 cli.add_command(get_all_files_list, 'files')
