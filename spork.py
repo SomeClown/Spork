@@ -25,10 +25,10 @@ def cli():
 
 
 @click.command(options_metavar='[no options]', short_help='get list of files')
-def testing_db():
+def populate_db():
     pass
 
-cli.add_command(testing_db, 'test')
+cli.add_command(populate_db, 'populate_db')
 
 if __name__ == '__main__':
     cli()
