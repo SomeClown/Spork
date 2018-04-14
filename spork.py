@@ -6,6 +6,9 @@ import click
 import datetime
 from tqdm import tqdm
 import utilities
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from tabledef import *
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -191,6 +194,21 @@ def archive(name: str, file_t: str, everything: bool):
         print('\n' + str(count) + ' messages retrieved in ' + '{:.2f}'.format(elapsed) + ' seconds')
 
 
+@click.command(options_metavar='[no options]', short_help='testing')
+def testing_db():
+    my_engine = create_engine('sqlite:///spork.db', echo=True)
+    my_session = sessionmaker(bind=my_engine)
+    session = my_session()
+    get_rooms = utilities.get_stuff(suffix='rooms')
+    rooms = utilities.RoomsObject(get_rooms)
+    count = 0
+    while count <= len(rooms) - 1:
+        my_entry = Room(rooms.room_id(count), rooms.title(count), rooms.room_type(count), rooms.is_locked(count),
+                        rooms.last_activity(count), 0, rooms.creator_id(count), rooms.created(count))
+        session.add(my_entry)
+        count += 1
+    session.commit()
+
 """ Adding the cli commands which trigger the functions above """
 cli.add_command(get_all_files_list, 'files')
 cli.add_command(display_rooms, 'rooms')
@@ -198,6 +216,7 @@ cli.add_command(fortune_spam, 'spam')
 cli.add_command(get_messages, 'messages')
 cli.add_command(send_message, 'send')
 cli.add_command(archive, 'archive')
+cli.add_command(testing_db, 'test')
 
 if __name__ == '__main__':
     cli()

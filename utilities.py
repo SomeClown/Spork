@@ -126,23 +126,23 @@ def get_stuff(suffix: str):
     if response.status_code == 200:
         return json.loads(response.content.decode('utf-8'))
     elif response.status_code >= 500:
-        print(color_red2_on + '\n[!] [{0}] Server Error'.format(response.status_code))
+        print(color_red2_on + '\n[!] [{0}] Server Error'.format(response.status_code) + color_off)
         return None
     elif response.status_code == 404:
-        print(color_red2_on + '\n[!] [{0}] URL not found: [{1}]'.format(response.status_code, api_url))
+        print(color_red2_on + '\n[!] [{0}] URL not found: [{1}]'.format(response.status_code, api_url) + color_off)
         return None
     elif response.status_code == 401:
-        print(color_red2_on + '\n[!] [{0}] Authentication Failed'.format(response.status_code))
+        print(color_red2_on + '\n[!] [{0}] Authentication Failed'.format(response.status_code) + color_off)
         return None
     elif response.status_code == 400:
-        print(color_red2_on + '\n[!] [{0}] Bad Request'.format(response.status_code))
+        print(color_red2_on + '\n[!] [{0}] Bad Request'.format(response.status_code) + color_off)
         return None
     elif response.status_code >= 300:
-        print(color_red2_on + '\n[!] [{0}] Unexpected Redirect'.format(response.status_code))
+        print(color_red2_on + '\n[!] [{0}] Unexpected Redirect'.format(response.status_code) + color_off)
         return None
     else:
         print(color_red2_on + '\n[?] Unexpected Error: [HTTP {0}]: '
-                              'Content: {1}'.format(response.status_code, response.content))
+                              'Content: {1}'.format(response.status_code, response.content) + color_off)
         return None
 
 
