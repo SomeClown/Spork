@@ -2,6 +2,7 @@ from ciscosparkapi import CiscoSparkAPI
 import os
 from itertools import islice
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import exc
 from tabledef import *
 
 __author__ = "SomeClown"
@@ -43,12 +44,12 @@ class GrabData(object):
         return rooms
 
     @staticmethod
-    def get_people():
+    def get_people(person_id):
         """
         Returns a people object
         :return: 
         """
-        people = [peeps for peeps in api.people.list(id='Y2lzY29zcGFyazovL3VzL1BFT1BMRS85ODg5YWVjZS1jOTQ0LTQ0MWYtOTVkMi1iNmU1N2UyNjhhMjk')]
+        people = [peeps for peeps in api.people.list(id=person_id)]
         for peeps in people:
             yield peeps
 
@@ -58,9 +59,11 @@ class GrabData(object):
         returns memberships
         :return: 
         """
-        membership = [members for members in api.memberships.list()]
-        for members in membership:
-            yield members
+        rooms = [room for room in api.rooms.list()]
+        for item in rooms:
+            membership = [members for members in api.memberships.list(item.id)]
+            for members in membership:
+                yield members
 
     @staticmethod
     def get_teams():
@@ -159,12 +162,17 @@ class DBOps(object):
         commit people to database
         :return: 
         """
-        my_people = self.my_data.get_people()
-        for item in my_people:
-            db_entry = People(item.id, item.emails[0], item.displayName, item.nickName, item.firstName,
-                              item.lastName, item.avatar, item.orgId, item.created, item.type)
-            self.session.add(db_entry)
-        self.session.commit()
+        people = self.my_data.get_memberships()
+        for person in people:
+            my_people = self.my_data.get_people(person.personId)
+            for item in my_people:
+                db_entry = People(item.id, item.emails[0], item.displayName, item.nickName, item.firstName,
+                                  item.lastName, item.avatar, item.orgId, item.created, item.type)
+                self.session.add(db_entry)
+                try:
+                    self.session.commit()
+                except exc.IntegrityError:
+                    self.session.rollback()
 
     def membership(self):
         """

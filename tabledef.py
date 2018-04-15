@@ -141,4 +141,5 @@ class Memberships(Base):
         self.created = created
 
 
-Base.metadata.create_all(engine)
+if __name__ == '__main__':
+    Base.metadata.create_all(engine)
