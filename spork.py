@@ -27,13 +27,21 @@ def cli():
 @click.command(options_metavar='[no options]', short_help='get list of files')
 @click.option('-r', '--rooms', is_flag=True, help='populate rooms database table')
 @click.option('-p', '--people', is_flag=True, help='populate people database table')
-def populate_db(rooms: bool, people: bool):
+@click.option('-m', '--membership', is_flag=True, help='populate membership database table')
+@click.option('-t', '--teams', is_flag=True, help='populate teams database table')
+def populate_db(rooms: bool, people: bool, membership: bool, teams: bool):
     if rooms:
         action = utilities.DBOps()
         action.rooms()
     elif people:
         action = utilities.DBOps()
         action.people()
+    elif membership:
+        action = utilities.DBOps()
+        action.membership()
+    elif teams:
+        action = utilities.DBOps()
+        action.teams()
 
 
 cli.add_command(populate_db, 'populate_db')

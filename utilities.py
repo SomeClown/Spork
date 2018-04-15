@@ -45,12 +45,32 @@ class GrabData(object):
     @staticmethod
     def get_people():
         """
-        Returns a list of people
+        Returns a people object
         :return: 
         """
         people = [peeps for peeps in api.people.list(id='Y2lzY29zcGFyazovL3VzL1BFT1BMRS85ODg5YWVjZS1jOTQ0LTQ0MWYtOTVkMi1iNmU1N2UyNjhhMjk')]
         for peeps in people:
             yield peeps
+
+    @staticmethod
+    def get_memberships():
+        """
+        returns memberships
+        :return: 
+        """
+        membership = [members for members in api.memberships.list()]
+        for members in membership:
+            yield members
+
+    @staticmethod
+    def get_teams():
+        """
+        returns team membership information
+        :return: 
+        """
+        teams = [team for team in api.teams.list()]
+        for team in teams:
+            yield team
 
     @staticmethod
     def get_room_msg(room_id):
@@ -123,6 +143,10 @@ class DBOps(object):
     my_data = GrabData()
 
     def rooms(self):
+        """
+        commit all rooms information to database
+        :return: 
+        """
         my_rooms = self.my_data.get_my_rooms()
         for item in my_rooms:
             db_entry = Room(item.id, item.title, item.type, item.isLocked, item.lastActivity,
@@ -131,10 +155,38 @@ class DBOps(object):
         self.session.commit()
 
     def people(self):
+        """
+        commit people to database
+        :return: 
+        """
         my_people = self.my_data.get_people()
         for item in my_people:
             db_entry = People(item.id, item.emails[0], item.displayName, item.nickName, item.firstName,
                               item.lastName, item.avatar, item.orgId, item.created, item.type)
+            self.session.add(db_entry)
+        self.session.commit()
+
+    def membership(self):
+        """
+        commit room membership information to database
+        :return: 
+        """
+        memberships = self.my_data.get_memberships()
+        for item in memberships:
+            db_entry = Memberships(item.id, item.roomId, item.personId, item.personEmail,
+                                   item.personDisplayName, item.personOrgId, item.isModerator,
+                                   item.isMonitor, item.created)
+            self.session.add(db_entry)
+        self.session.commit()
+
+    def teams(self):
+        """
+        commit team membership information to database
+        :return: 
+        """
+        my_teams = self.my_data.get_teams()
+        for item in my_teams:
+            db_entry = Teams(item.id, item.name, item.creatorId, item.created)
             self.session.add(db_entry)
         self.session.commit()
 
