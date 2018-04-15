@@ -110,7 +110,10 @@ class GrabData(object):
                 return room.title
 
 
-class db_ops(object):
+class DBOps(object):
+    """
+    class to encapsulate all database operations
+    """
     def __init__(self):
         pass
 

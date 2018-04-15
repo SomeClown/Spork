@@ -29,10 +29,10 @@ def cli():
 @click.option('-p', '--people', is_flag=True, help='populate people database table')
 def populate_db(rooms: bool, people: bool):
     if rooms:
-        action = utilities.db_ops()
+        action = utilities.DBOps()
         action.rooms()
     elif people:
-        action = utilities.db_ops()
+        action = utilities.DBOps()
         action.people()
 
 
