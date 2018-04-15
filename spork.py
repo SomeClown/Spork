@@ -25,8 +25,16 @@ def cli():
 
 
 @click.command(options_metavar='[no options]', short_help='get list of files')
-def populate_db():
-    pass
+@click.option('-r', '--rooms', is_flag=True, help='populate rooms database table')
+@click.option('-p', '--people', is_flag=True, help='populate people database table')
+def populate_db(rooms: bool, people: bool):
+    if rooms:
+        action = utilities.db_ops()
+        action.rooms()
+    elif people:
+        action = utilities.db_ops()
+        action.people()
+
 
 cli.add_command(populate_db, 'populate_db')
 

@@ -1,6 +1,8 @@
 from ciscosparkapi import CiscoSparkAPI
 import os
 from itertools import islice
+from sqlalchemy.orm import sessionmaker
+from tabledef import *
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -39,6 +41,16 @@ class GrabData(object):
         """
         rooms = [room for room in api.rooms.list()]
         return rooms
+
+    @staticmethod
+    def get_people():
+        """
+        Returns a list of people
+        :return: 
+        """
+        people = [peeps for peeps in api.people.list(id='Y2lzY29zcGFyazovL3VzL1BFT1BMRS85ODg5YWVjZS1jOTQ0LTQ0MWYtOTVkMi1iNmU1N2UyNjhhMjk')]
+        for peeps in people:
+            yield peeps
 
     @staticmethod
     def get_room_msg(room_id):
@@ -96,4 +108,31 @@ class GrabData(object):
         for room in rooms_list:
             if room_id in room.id:
                 return room.title
+
+
+class db_ops(object):
+    def __init__(self):
+        pass
+
+    my_engine = create_engine('sqlite:///spork.db', echo=True)
+    my_session = sessionmaker(bind=my_engine)
+    session = my_session()
+    my_data = GrabData()
+
+    def rooms(self):
+        my_rooms = self.my_data.get_my_rooms()
+        for item in my_rooms:
+            db_entry = Room(item.id, item.title, item.type, item.isLocked, item.lastActivity,
+                            item.teamId, item.creatorId, item.created)
+            self.session.add(db_entry)
+        self.session.commit()
+
+    def people(self):
+        my_people = self.my_data.get_people()
+        for item in my_people:
+            db_entry = People(item.id, item.emails[0], item.displayName, item.nickName, item.firstName,
+                              item.lastName, item.avatar, item.orgId, item.created, item.type)
+            self.session.add(db_entry)
+        self.session.commit()
+
 
