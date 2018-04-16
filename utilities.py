@@ -30,8 +30,8 @@ class GrabData(object):
         Returns a list of rooms by ID
         :return: 
         """
-        rooms = [room for room in api.rooms.list()]
-        for room in rooms:
+        __rooms = [room for room in api.rooms.list()]
+        for room in __rooms:
             yield room
 
     @staticmethod
@@ -40,8 +40,8 @@ class GrabData(object):
         Returns a list of rooms by ID
         :return: 
         """
-        rooms = [room for room in api.rooms.list()]
-        return rooms
+        __rooms = [room for room in api.rooms.list()]
+        return __rooms
 
     @staticmethod
     def get_people(person_id):
@@ -49,8 +49,8 @@ class GrabData(object):
         Returns a people object
         :return: 
         """
-        people = [peeps for peeps in api.people.list(id=person_id)]
-        for peeps in people:
+        __people = [peeps for peeps in api.people.list(id=person_id)]
+        for peeps in __people:
             yield peeps
 
     @staticmethod
@@ -59,10 +59,10 @@ class GrabData(object):
         returns memberships
         :return: 
         """
-        rooms = [room for room in api.rooms.list()]
-        for item in rooms:
-            membership = [members for members in api.memberships.list(item.id)]
-            for members in membership:
+        __rooms = [room for room in api.rooms.list()]
+        for item in __rooms:
+            __membership = [members for members in api.memberships.list(item.id)]
+            for members in __membership:
                 yield members
 
     @staticmethod
@@ -71,8 +71,8 @@ class GrabData(object):
         returns team membership information
         :return: 
         """
-        teams = [team for team in api.teams.list()]
-        for team in teams:
+        __teams = [team for team in api.teams.list()]
+        for team in __teams:
             yield team
 
     @staticmethod
@@ -82,8 +82,8 @@ class GrabData(object):
         :param room_id: 
         :return: 
         """
-        room_messages = [item for item in api.messages.list(roomId=room_id)]
-        for msg in room_messages:
+        __room_messages = [item for item in api.messages.list(roomId=room_id)]
+        for msg in __room_messages:
             yield msg
 
     @staticmethod
@@ -94,9 +94,9 @@ class GrabData(object):
         :param max_msg: 
         :return: 
         """
-        room_messages = api.messages.list(roomId=room_id)
-        short_list = list(islice(room_messages, max_msg))
-        return short_list
+        __room_messages = api.messages.list(roomId=room_id)
+        __short_list = list(islice(__room_messages, max_msg))
+        return __short_list
 
     def name_to_id(self, room_name: str):
         """
@@ -104,8 +104,8 @@ class GrabData(object):
         :param room_name:
         :return:
         """
-        rooms_list = self.get_my_rooms_lst()
-        for room in rooms_list:
+        __rooms_list = self.get_my_rooms_lst()
+        for room in __rooms_list:
             if room_name in room.title:
                 return room.id
 
@@ -115,8 +115,8 @@ class GrabData(object):
         :param room_id:
         :return:
         """
-        rooms_list = self.get_my_rooms_lst()
-        for room in rooms_list:
+        __rooms_list = self.get_my_rooms_lst()
+        for room in __rooms_list:
             if room_id in room.id:
                 return room.title
 
