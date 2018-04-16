@@ -2,8 +2,6 @@
 
 import click
 import utilities
-from sqlalchemy.orm import sessionmaker
-from tabledef import *
 
 __author__ = "SomeClown"
 __license__ = "MIT"
@@ -24,12 +22,21 @@ def cli():
     pass
 
 
-@click.command(options_metavar='[no options]', short_help='get list of files')
+@click.command(options_metavar='[no options]',
+               short_help='Various options to populate database tables in the Spark database')
 @click.option('-r', '--rooms', is_flag=True, help='populate rooms database table')
 @click.option('-p', '--people', is_flag=True, help='populate people database table')
 @click.option('-m', '--membership', is_flag=True, help='populate membership database table')
 @click.option('-t', '--teams', is_flag=True, help='populate teams database table')
 def populate_db(rooms: bool, people: bool, membership: bool, teams: bool):
+    """
+    Various options to populate database tables in the Spark database
+    :param rooms: 
+    :param people: 
+    :param membership: 
+    :param teams: 
+    :return: 
+    """
     if rooms:
         action = utilities.DBOps()
         action.rooms()

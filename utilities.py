@@ -13,7 +13,7 @@ __email__ = "teren@wwt.com"
 # Load spark API token from environment
 spark_token = os.environ["SPARK_ACCESS_TOKEN"]
 
-# For using CiscoSparkAPI
+# Create Spark API instance
 api = CiscoSparkAPI()
 
 
@@ -98,18 +98,6 @@ class GrabData(object):
         short_list = list(islice(room_messages, max_msg))
         return short_list
 
-    def flatten(self, lst: list):
-        """
-        Not used at this point. Flattens a nested list. Also not quite working, so, there's that.
-        :param lst: 
-        :return: 
-        """
-        for element in lst:
-            if hasattr(element, "__iter__"):
-                yield from self.flatten(element)
-            elif element is not None:
-                yield element
-
     def name_to_id(self, room_name: str):
         """
         Takes a room name and returns its id
@@ -155,7 +143,10 @@ class DBOps(object):
             db_entry = Room(item.id, item.title, item.type, item.isLocked, item.lastActivity,
                             item.teamId, item.creatorId, item.created)
             self.session.add(db_entry)
-        self.session.commit()
+            try:
+                self.session.commit()
+            except exc.IntegrityError:
+                self.session.rollback()
 
     def people(self):
         """
@@ -185,7 +176,10 @@ class DBOps(object):
                                    item.personDisplayName, item.personOrgId, item.isModerator,
                                    item.isMonitor, item.created)
             self.session.add(db_entry)
-        self.session.commit()
+            try:
+                self.session.commit()
+            except exc.IntegrityError:
+                self.session.rollback()
 
     def teams(self):
         """
@@ -196,6 +190,9 @@ class DBOps(object):
         for item in my_teams:
             db_entry = Teams(item.id, item.name, item.creatorId, item.created)
             self.session.add(db_entry)
-        self.session.commit()
+            try:
+                self.session.commit()
+            except exc.IntegrityError:
+                self.session.rollback()
 
 
