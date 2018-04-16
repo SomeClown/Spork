@@ -28,13 +28,15 @@ def cli():
 @click.option('-p', '--people', is_flag=True, help='populate people database table')
 @click.option('-m', '--membership', is_flag=True, help='populate membership database table')
 @click.option('-t', '--teams', is_flag=True, help='populate teams database table')
-def populate_db(rooms: bool, people: bool, membership: bool, teams: bool):
+@click.option('-M', '--messages', is_flag=True, help='populate messages database table')
+def populate_db(rooms: bool, people: bool, membership: bool, teams: bool, messages: bool):
     """
     Various options to populate database tables in the Spark database
     :param rooms: 
     :param people: 
     :param membership: 
-    :param teams: 
+    :param teams:
+    :param messages:
     :return: 
     """
     if rooms:
@@ -49,6 +51,10 @@ def populate_db(rooms: bool, people: bool, membership: bool, teams: bool):
     elif teams:
         action = utilities.DBOps()
         action.teams()
+    elif messages:
+        action = utilities.DBOps()
+        foo = utilities.GrabData.get_my_rooms_lst()
+        action.messages(foo)
 
 
 cli.add_command(populate_db, 'populate_db')

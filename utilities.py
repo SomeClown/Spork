@@ -195,4 +195,33 @@ class DBOps(object):
             except exc.IntegrityError:
                 self.session.rollback()
 
+    def messages(self, room):
+        """
+        commit messages, by room, to database
+        :return: 
+        """
+        if isinstance(room, str):
+            one_room = room
+            my_messages = self.my_data.get_room_msg(room_id=one_room)
+            for item in my_messages:
+                db_entry = Message(item.id, item.roomId, item.roomType, item.text,
+                                   item.personId, item.personEmail, item.created)
+                self.session.add(db_entry)
+                try:
+                    self.session.commit()
+                except exc.IntegrityError:
+                    self.session.rollback()
+        elif isinstance(room, list):
+            many_rooms = room
+            for item in many_rooms:
+                my_messages = self.my_data.get_room_msg(room_id=item.id)
+                for items in my_messages:
+                    db_entry = Message(items.id, items.roomId, items.roomType, items.text,
+                                       items.personId, items.personEmail, items.created)
+                    self.session.add(db_entry)
+                    try:
+                        self.session.commit()
+                    except exc.IntegrityError:
+                        self.session.rollback()
+
 
