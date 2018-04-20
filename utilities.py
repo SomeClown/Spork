@@ -1,6 +1,12 @@
-from ciscosparkapi import CiscoSparkAPI
-import os
+#!/usr/bin/env python3
+
+"""
+Utility module for Spork. GET/PUSH operations on the Spark API, as well as SQLAlchemy operations
+"""
+
 from itertools import islice
+import os
+from ciscosparkapi import CiscoSparkAPI
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import exc
 from tabledef import *
@@ -131,14 +137,14 @@ class DBOps(object):
     my_engine = create_engine('sqlite:///spork.db', echo=True)
     my_session = sessionmaker(bind=my_engine)
     session = my_session()
-    my_data = GrabData()
 
     def rooms(self):
         """
         commit all rooms information to database
         :return: 
         """
-        my_rooms = self.my_data.get_my_rooms()
+        my_data = GrabData()
+        my_rooms = my_data.get_my_rooms()
         for item in my_rooms:
             db_entry = Room(item.id, item.title, item.type, item.isLocked, item.lastActivity,
                             item.teamId, item.creatorId, item.created)
@@ -153,9 +159,10 @@ class DBOps(object):
         commit people to database
         :return: 
         """
-        people = self.my_data.get_memberships()
+        my_data = GrabData()
+        people = my_data.get_memberships()
         for person in people:
-            my_people = self.my_data.get_people(person.personId)
+            my_people = my_data.get_people(person.personId)
             for item in my_people:
                 db_entry = People(item.id, item.emails[0], item.displayName, item.nickName, item.firstName,
                                   item.lastName, item.avatar, item.orgId, item.created, item.type)
@@ -170,7 +177,8 @@ class DBOps(object):
         commit room membership information to database
         :return: 
         """
-        memberships = self.my_data.get_memberships()
+        my_data = GrabData()
+        memberships = my_data.get_memberships()
         for item in memberships:
             db_entry = Memberships(item.id, item.roomId, item.personId, item.personEmail,
                                    item.personDisplayName, item.personOrgId, item.isModerator,
@@ -186,7 +194,8 @@ class DBOps(object):
         commit team membership information to database
         :return: 
         """
-        my_teams = self.my_data.get_teams()
+        my_data = GrabData()
+        my_teams = my_data.get_teams()
         for item in my_teams:
             db_entry = Teams(item.id, item.name, item.creatorId, item.created)
             self.session.add(db_entry)
@@ -200,9 +209,10 @@ class DBOps(object):
         commit messages, by room, to database
         :return: 
         """
+        my_data = GrabData()
         if isinstance(room, str):
             one_room = room
-            my_messages = self.my_data.get_room_msg(room_id=one_room)
+            my_messages = my_data.get_room_msg(room_id=one_room)
             for item in my_messages:
                 db_entry = Message(item.id, item.roomId, item.roomType, item.text,
                                    item.personId, item.personEmail, item.created)
@@ -214,7 +224,7 @@ class DBOps(object):
         elif isinstance(room, list):
             many_rooms = room
             for item in many_rooms:
-                my_messages = self.my_data.get_room_msg(room_id=item.id)
+                my_messages = my_data.get_room_msg(room_id=item.id)
                 for items in my_messages:
                     db_entry = Message(items.id, items.roomId, items.roomType, items.text,
                                        items.personId, items.personEmail, items.created)
@@ -224,4 +234,13 @@ class DBOps(object):
                     except exc.IntegrityError:
                         self.session.rollback()
 
-
+    def search_email(self, search_term):
+        """
+        test
+        :return: 
+        """
+        for email_result in self.session.query(People).order_by(People.emails):
+            if search_term in email_result.emails:
+                yield email_result.emails
+            else:
+                pass

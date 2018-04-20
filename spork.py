@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+CLI for Spork command line Spark client
+"""
+
 import click
 import utilities
 
@@ -57,7 +61,21 @@ def populate_db(rooms: bool, people: bool, membership: bool, teams: bool, messag
         action.messages(foo)
 
 
+@click.command(options_metavar='[no options]', short_help='Various options to search the Spork database')
+@click.option('-t', '--term', 'search_term', help='Search term')
+def search_db(search_term):
+    """
+    Search term testing. This MUST BE CLEANED UP BEFORE USING as there are no sanity checks on input
+    :param search_term: 
+    :return: 
+    """
+    test = utilities.DBOps()
+    for returned_item in test.search_email(search_term):
+        print(returned_item)
+
+
 cli.add_command(populate_db, 'populate_db')
+cli.add_command(search_db, 'search_db')
 
 if __name__ == '__main__':
     cli()
