@@ -69,13 +69,27 @@ def search_db(search_term):
     :param search_term: 
     :return: 
     """
-    test = utilities.DBOps()
-    for returned_item in test.search_email(search_term):
-        print(returned_item)
+    search_results = utilities.DBOps()
+    for returned_item in search_results.search_email(search_term):
+        print('{:30}'.format(returned_item.displayName), '{:30}'.format(returned_item.emails))
+
+
+@click.command(options_metavar='[no options]', short_help='Various options to search the Spork database')
+@click.option('-d', '--dev', 'search_term', help='Search term')
+def search_dev(search_term=''):
+    """
+    Search term testing. This MUST BE CLEANED UP BEFORE USING as there are no sanity checks on input
+    :param search_term: 
+    :return: 
+    """
+    dev_results = utilities.DBOps()
+    for returned_item in dev_results.search_team_creator_id(search_term):
+        print(returned_item.team_name)
 
 
 cli.add_command(populate_db, 'populate_db')
 cli.add_command(search_db, 'search_db')
+cli.add_command(search_dev, 'search_team_creator_id')
 
 if __name__ == '__main__':
     cli()

@@ -239,8 +239,21 @@ class DBOps(object):
         test
         :return: 
         """
-        for email_result in self.session.query(People).order_by(People.emails):
-            if search_term in email_result.emails:
-                yield email_result.emails
+        for search_result in self.session.query(People).order_by(People.emails):
+            if search_term in search_result.emails:
+                yield search_result
             else:
                 pass
+
+    def search_team_creator_id(self, person_id):
+        """
+        testing
+        :param person_id: 
+        :return: 
+        """
+
+        # Searches the Teams and People tables to find teams created by a person (person_id)
+        results = self.session.query(Teams) \
+            .join(People).filter(People.person_id == person_id).all()
+        return results
+

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Column, String, Boolean, ForeignKey
 from sqlalchemy import create_engine
 
@@ -79,6 +80,7 @@ class People(Base):
     org_id = Column(String)
     created = Column(String)
     person_type = Column(String)
+    person_rooms = relationship("Teams")
 
     def __init__(self, person_id, emails, display_name, nick_name, first_name, last_name,
                  avatar, org_id, created, person_type):
@@ -112,6 +114,9 @@ class Teams(Base):
         self.created = created
 
 
+    #__mapper_args__ = {'polymorphic_identity': 'team', 'inherit_condition': People.person_id == People.person_id}
+
+
 class Memberships(Base):
     """
     database model for a memberships object
@@ -140,6 +145,7 @@ class Memberships(Base):
         self.is_monitor = is_monitor
         self.created = created
 
+Base.metadata.create_all(engine)
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
