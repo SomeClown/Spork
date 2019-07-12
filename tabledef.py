@@ -80,7 +80,7 @@ class People(Base):
     org_id = Column(String)
     created = Column(String)
     person_type = Column(String)
-    person_rooms = relationship("Teams")
+    team_creator = relationship("Teams", uselist=False, backref=backref('creator', uselist=True))
 
     def __init__(self, person_id, emails, display_name, nick_name, first_name, last_name,
                  avatar, org_id, created, person_type):
@@ -112,9 +112,6 @@ class Teams(Base):
         self.team_name = team_name
         self.creator_id = creator_id
         self.created = created
-
-
-    #__mapper_args__ = {'polymorphic_identity': 'team', 'inherit_condition': People.person_id == People.person_id}
 
 
 class Memberships(Base):
