@@ -7,6 +7,7 @@ Utility module for Spork. GET/PUSH operations on the Spark API, as well as SQLAl
 from itertools import islice
 import os
 from ciscosparkapi import CiscoSparkAPI
+from webexteamssdk import WebexTeamsAPI
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import exc
 from tabledef import *
@@ -20,7 +21,8 @@ __email__ = "teren@wwt.com"
 spark_token = os.environ["SPARK_ACCESS_TOKEN"]
 
 # Create Spark API instance
-api = CiscoSparkAPI()
+# api = CiscoSparkAPI()
+api = WebexTeamsAPI()
 
 
 class GrabData(object):
