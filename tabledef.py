@@ -142,6 +142,7 @@ class Memberships(Base):
         self.is_monitor = is_monitor
         self.created = created
 
+
 Base.metadata.create_all(engine)
 
 if __name__ == '__main__':
