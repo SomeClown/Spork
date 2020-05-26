@@ -17,7 +17,7 @@ __maintainer__ = "Teren Bryson"
 __email__ = "teren@wwt.com"
 
 # Load spark API token from environment
-spark_token = os.environ["SPARK_ACCESS_TOKEN"]
+spark_token = os.environ["WEBEX_TEAMS_ACCESS_TOKEN"]
 
 # Create Teams API instance
 api = WebexTeamsAPI()
